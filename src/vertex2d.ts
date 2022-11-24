@@ -1,6 +1,37 @@
 import {IBufferable} from "./ibufferable";
 import {IAttribute} from "./attribute";
 
+export class Vertex2D {
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+
+    toFloatArray(): Float32Array {
+        return new Float32Array([this.x, this.y]);
+    }
+
+    static attributes(gl: WebGLRenderingContext): Array<IAttribute> {
+        let coodinate = {
+                            name: "vertPosition",
+                            valuesCount: 2,
+                            glType: gl.FLOAT,
+                            dataNormalized: false,
+                            parentByteSize: 5 * Float32Array.BYTES_PER_ELEMENT,
+                            offsetInParent: 0
+                        };
+
+        return [coodinate];
+    }
+
+    dataLength(): number {
+        return 2;
+    }
+}
+
 export class Vertex2DWithColor implements IBufferable {
     x: number;
     y: number;
@@ -19,7 +50,7 @@ export class Vertex2DWithColor implements IBufferable {
         return new Float32Array([this.x, this.y, normalizedRed, normalizedGreen, normalizedBlue]);
     }
 
-        dataLength(): number {
+    dataLength(): number {
         return 5;
     }
 

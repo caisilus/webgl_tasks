@@ -1,7 +1,8 @@
 import {ShaderProgram} from "./shader_program";
 import {Shader} from "./shader";
 import {FloatBuffer} from "./buffer";
-import {Vertex2DWithColor} from "./vertex2d";
+import {Vertex2D, Vertex2DWithColor} from "./vertex2d";
+import {IBufferable} from "./ibufferable"
 
 // shaders
 import vertexShaderText from "./shaders/shader.vert";
@@ -15,7 +16,7 @@ export class Drawer {
     private buffer: FloatBuffer;
     private programBuilt: boolean = false;
     
-    constructor(gl: WebGL2RenderingContext) {
+    constructor(gl: WebGL2RenderingContext, vertexShaderText: string, fragmentShaderText: string) {
         this.gl = gl;
         this.program = new ShaderProgram(gl);
         this.vertexShader = new Shader(gl, vertexShaderText, gl.VERTEX_SHADER);
@@ -36,7 +37,7 @@ export class Drawer {
         this.fragmentShader.compile();
     }
 
-    draw(vertices: Array<Vertex2DWithColor>) {
+    draw(vertices: Array<Vertex2D>, drawMethod: number, pointsCount: number) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
@@ -45,19 +46,19 @@ export class Drawer {
         this.prepareData(vertices);
         this.gl.useProgram(this.program.program);
         this.gl.drawArrays(
-                                this.gl.TRIANGLES, // draw method 
-                                0,                 // how many to skip 
-                                3                  // how many to take
+                                drawMethod, // draw method 
+                                0,          // how many to skip 
+                                pointsCount // how many to take
                           );
     }
 
-    private prepareData(vertices: Array<Vertex2DWithColor>) {
+    private prepareData(vertices: Array<Vertex2D>) {
         this.buffer.putData(vertices);
         this.bindAttributesToBuffer();
     }
 
     private bindAttributesToBuffer() {
-        let attributes = Vertex2DWithColor.attributes(this.gl);
+        let attributes = Vertex2D.attributes(this.gl);
         for (let i = 0; i < attributes.length; i++) {
             this.buffer.bindAttribute(attributes[i], this.program.program);
         }
