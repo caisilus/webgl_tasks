@@ -2,7 +2,7 @@ import fragmentShader from "./shaders/shader_uniform.frag";
 import vertexShader from "./shaders/shader_uniform.vert";
 
 import {Drawer} from "./refactored_drawer";
-import {Vertex2DWithColor} from "./vertex2d";
+import {Vertex2D, Vertex2DWithColor} from "./vertex2d";
 import {DrawData} from "./draw_data";
 
 class Main {
@@ -49,11 +49,24 @@ class Main {
     private drawDataFromFigureName(name: string): DrawData {
         switch (name) {
             case "Треугольник": {
-                let vertices = [new Vertex2DWithColor(-1.0, 1.0, [255,0,0]), 
-                                new Vertex2DWithColor(0.0, -1.0, [0,255,0]),
-                                new Vertex2DWithColor(1.0, 1.0,  [0,0,255])];
+                let vertices = [new Vertex2D(-1.0, 1.0), 
+                                new Vertex2D(0.0, -1.0),
+                                new Vertex2D(1.0, 1.0)];
                 let drawMethod = this.gl.TRIANGLES;
                 let pointsCount = 3;
+                return {
+                    "vertices": vertices,
+                    "drawMethod": drawMethod,
+                    "pointsCount": pointsCount
+                };
+            }
+            case "Прямоугольник": {
+                let vertices = [new Vertex2D(-1.0, -1.0), 
+                                new Vertex2D(-1.0, 1.0),
+                                new Vertex2D(1.0, -1.0),
+                                new Vertex2D(1.0, 1.0)];
+                let drawMethod = this.gl.TRIANGLE_STRIP;
+                let pointsCount = 4;
                 return {
                     "vertices": vertices,
                     "drawMethod": drawMethod,

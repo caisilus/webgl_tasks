@@ -20,7 +20,7 @@ export class Vertex2D {
                             valuesCount: 2,
                             glType: gl.FLOAT,
                             dataNormalized: false,
-                            parentByteSize: 5 * Float32Array.BYTES_PER_ELEMENT,
+                            parentByteSize: 2 * Float32Array.BYTES_PER_ELEMENT,
                             offsetInParent: 0
                         };
 
