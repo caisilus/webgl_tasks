@@ -38,7 +38,7 @@ export class Drawer {
     }
 
     draw(vertices: Array<Vertex2D>, drawMethod: number, pointsCount: number, 
-            color = new Float32Array([0.0, 1.0, 0.0])) {
+            color: [number, number, number] = [0, 255, 0]) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
@@ -46,7 +46,7 @@ export class Drawer {
         this.clearBg();
         this.prepareData(vertices);
         this.gl.useProgram(this.program.program);
-        this.bindUniform(color);
+        this.bindUniform("figureColor", color);
         this.gl.drawArrays(
                                 drawMethod, // draw method 
                                 0,          // how many to skip 
@@ -67,9 +67,10 @@ export class Drawer {
         }
     }
 
-    private bindUniform(color: Float32Array) {
-        let location = this.gl.getUniformLocation(this.program.program, "figureColor");
-        this.gl.uniform3fv(location, color); // green
+    private bindUniform(name: string, color: [number, number, number]) {
+        let location = this.gl.getUniformLocation(this.program.program, name);
+        let normalizedColor = [color[0] / 255.0, color[1] / 255.0, color[2] / 255.0];
+        this.gl.uniform3fv(location, new Float32Array(normalizedColor));
     }
 
     clearBg() {
