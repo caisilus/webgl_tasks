@@ -1,7 +1,7 @@
 import {IBufferable} from "./ibufferable";
 import {IAttribute} from "./attribute";
 
-export class Vertex2D {
+export class Vertex2D implements IBufferable {
     x: number;
     y: number;
 

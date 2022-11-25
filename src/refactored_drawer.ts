@@ -37,7 +37,8 @@ export class Drawer {
         this.fragmentShader.compile();
     }
 
-    draw(vertices: Array<Vertex2D>, drawMethod: number, pointsCount: number) {
+    draw(vertices: Array<Vertex2D>, drawMethod: number, pointsCount: number, 
+            color = new Float32Array([0.0, 1.0, 0.0])) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
@@ -45,6 +46,7 @@ export class Drawer {
         this.clearBg();
         this.prepareData(vertices);
         this.gl.useProgram(this.program.program);
+        this.bindUniform(color);
         this.gl.drawArrays(
                                 drawMethod, // draw method 
                                 0,          // how many to skip 
@@ -55,6 +57,7 @@ export class Drawer {
     private prepareData(vertices: Array<Vertex2D>) {
         this.buffer.putData(vertices);
         this.bindAttributesToBuffer();
+        // this.bindUniform();
     }
 
     private bindAttributesToBuffer() {
@@ -62,6 +65,11 @@ export class Drawer {
         for (let i = 0; i < attributes.length; i++) {
             this.buffer.bindAttribute(attributes[i], this.program.program);
         }
+    }
+
+    private bindUniform(color: Float32Array) {
+        let location = this.gl.getUniformLocation(this.program.program, "figureColor");
+        this.gl.uniform3fv(location, color); // green
     }
 
     clearBg() {

@@ -73,6 +73,38 @@ class Main {
                     "pointsCount": pointsCount
                 };
             }
+            case "Веер": {
+                let vertices = [new Vertex2D(0.0, 0.0)]
+                let angle = 30;
+                let count = 180 / angle;
+                let radAngle = angle / 180.0 * Math.PI
+                for (let i = 0; i <= count; i++) {
+                    vertices.push(new Vertex2D(Math.cos(radAngle * i), Math.sin(radAngle * i)));
+                }
+                let drawMethod = this.gl.TRIANGLE_FAN;
+                let pointsCount = count + 2;
+                return {
+                    "vertices": vertices,
+                    "drawMethod": drawMethod,
+                    "pointsCount": pointsCount
+                };
+            }
+            case "Пятиугольник": {
+                let vertices = [new Vertex2D(0.0, 0.0)]
+                let angle = 360 / 5;
+                let count = 5;
+                let radAngle = angle / 180.0 * Math.PI
+                for (let i = 0; i <= count; i++) {
+                    vertices.push(new Vertex2D(Math.cos(radAngle * i), Math.sin(radAngle * i)));
+                }
+                let drawMethod = this.gl.TRIANGLE_FAN;
+                let pointsCount = 5 + 2;
+                return {
+                    "vertices": vertices,
+                    "drawMethod": drawMethod,
+                    "pointsCount": pointsCount
+                };
+            }
         }
 
         return {
@@ -89,7 +121,7 @@ function f() {
 
 function main(){
     const canvas = document.querySelector("canvas#mycanvas") as HTMLCanvasElement;
-    canvas.setAttribute("width", "800");
+    canvas.setAttribute("width", "600");
     canvas.setAttribute("height", "600");
     const mainObj = new Main(canvas);
 }
