@@ -4,6 +4,7 @@ import vertexShader from "./shaders/shader_uniform.vert";
 import {Drawer} from "./refactored_drawer";
 import {DrawData} from "./draw_data";
 import {DrawDataCreator} from "./data_creator";
+import {Vertex2D} from "./vertex2d";
 
 class Main {
     gl: WebGL2RenderingContext;
@@ -42,7 +43,7 @@ class Main {
     draw() {
         let figureName = this.selectedFigureName();
         let drawData = this.dataCreator.drawDataFromFigureName(figureName);
-        this.drawer.draw(drawData.vertices, drawData.drawMethod, drawData.pointsCount);
+        this.drawer.draw(Vertex2D, drawData, [0, 255, 0]);
     }
 
     private selectedFigureName(): string {

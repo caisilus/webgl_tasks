@@ -1,15 +1,12 @@
 import {ShaderProgram} from "./shader_program";
 import {Shader} from "./shader";
 import {FloatBuffer} from "./buffer";
-import {Vertex2D, Vertex2DWithColor} from "./vertex2d";
 import {IBufferable} from "./ibufferable"
-
-// shaders
-import vertexShaderText from "./shaders/shader.vert";
-import fragmentShaderText from "./shaders/shader.frag";
+import {IAttributeExtractor} from "./attribute_extractable";
+import {DrawData} from "./draw_data";
 
 export class Drawer {
-    private gl: WebGLRenderingContext;
+    private gl: WebGL2RenderingContext;
     private program: ShaderProgram;
     private vertexShader: Shader;
     private fragmentShader: Shader;
@@ -37,31 +34,32 @@ export class Drawer {
         this.fragmentShader.compile();
     }
 
-    draw(vertices: Array<Vertex2D>, drawMethod: number, pointsCount: number, 
-            color: [number, number, number] = [0, 255, 0]) {
+    draw(attributeExtractor: IAttributeExtractor, drawData: DrawData, 
+            color: [number, number, number] | null = null) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
 
         this.clearBg();
-        this.prepareData(vertices);
+        this.prepareData(attributeExtractor, drawData.vertices);
         this.gl.useProgram(this.program.program);
-        this.bindUniform("figureColor", color);
+        if (color != null) {
+            this.bindUniform("figureColor", color);
+        }
         this.gl.drawArrays(
-                                drawMethod, // draw method 
+                                drawData.drawMethod, // draw method 
                                 0,          // how many to skip 
-                                pointsCount // how many to take
+                                drawData.pointsCount // how many to take
                           );
     }
 
-    private prepareData(vertices: Array<Vertex2D>) {
+    private prepareData(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>) {
         this.buffer.putData(vertices);
-        this.bindAttributesToBuffer();
-        // this.bindUniform();
+        this.bindAttributesToBuffer(attributeExtractor);
     }
 
-    private bindAttributesToBuffer() {
-        let attributes = Vertex2D.attributes(this.gl);
+    private bindAttributesToBuffer(attributeExtractor: IAttributeExtractor) {
+        let attributes = attributeExtractor.attributes(this.gl);
         for (let i = 0; i < attributes.length; i++) {
             this.buffer.bindAttribute(attributes[i], this.program.program);
         }
