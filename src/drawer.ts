@@ -27,6 +27,7 @@ export class Drawer {
         this.program.attachShader(this.fragmentShader);
         this.program.compileAndLink(true);
         this.programBuilt = true;
+        this.gl.useProgram(this.program.program);
     }
 
     compileShaders() {
@@ -34,17 +35,12 @@ export class Drawer {
         this.fragmentShader.compile();
     }
 
-    draw(drawData: DrawData, color: [number, number, number] | null = null) {
+    draw(drawData: DrawData) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
-
         this.clearBg();
         this.prepareData(drawData.attributeExtractor, drawData.vertices);
-        this.gl.useProgram(this.program.program);
-        if (color != null) {
-            this.bindUniform("figureColor", color);
-        }
         this.gl.drawArrays(
                                 drawData.drawMethod, // draw method 
                                 0,          // how many to skip 
@@ -64,14 +60,12 @@ export class Drawer {
         }
     }
 
-    private bindUniform(name: string, color: [number, number, number]) {
-        let location = this.gl.getUniformLocation(this.program.program, name);
-        let normalizedColor = [color[0] / 255.0, color[1] / 255.0, color[2] / 255.0];
-        this.gl.uniform3fv(location, new Float32Array(normalizedColor));
+    getGLProgram(): WebGLProgram {
+        return this.program.program; 
     }
 
-    clearBg() {
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    clearBg(color: [number, number, number] = [0, 0, 0]) {
+        this.gl.clearColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     }
 }
