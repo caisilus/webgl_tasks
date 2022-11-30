@@ -75,18 +75,17 @@ export class DrawDataCreator {
 
     private pentagonData() {
         let vertices = [new Vertex2D(0.0, 0.0)]
-        let angle = 360 / 5;
         let count = 5;
+        let angle = 360 / count;
         let radAngle = angle / 180.0 * Math.PI
         for (let i = 0; i <= count; i++) {
             vertices.push(new Vertex2D(Math.cos(radAngle * i), Math.sin(radAngle * i)));
         }
         let drawMethod = this.gl.TRIANGLE_FAN;
-        let pointsCount = 5 + 2;
         return {
             "vertices": vertices,
             "drawMethod": drawMethod,
-            "pointsCount": pointsCount,
+            "pointsCount": count + 2,
             "attributeExtractor": Vertex2D
         };
     }
