@@ -11,12 +11,15 @@ export class DrawDataCreator {
             case "Градиентный круг": {
                 return this.circleData();
             }
+            case "Текстурирование куба": {
+
+            }
             default: {
                 throw new Error(`Unknown figure name ${figureName}`);
             }
         }
     }
-
+    
     private circleData(): DrawData {
         let centerColor: [number, number, number] = [255, 255, 255]
         let center = new Vertex2DWithColor(0.0, 0.0, centerColor);
