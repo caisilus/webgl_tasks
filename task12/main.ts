@@ -1,23 +1,26 @@
 import fragmentShader from "./shaders/shader.frag";
-import vertexShader from "./shaders/shader.vert";
+import vertexShader from "./shaders/shader3d.vert";
 
 import {Drawer} from "../src/drawer";
 import {DrawDataCreator} from "./data_creator";
+import {Renderer3D} from "./renderer";
 
 class Main {
     gl: WebGL2RenderingContext;
     select: HTMLSelectElement;
     drawer: Drawer;
+    renderer: Renderer3D;
     dataCreator: DrawDataCreator;
-    rotationUniformLocation: WebGLUniformLocation | null;
+    //rotationUniformLocation: WebGLUniformLocation | null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas)
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         this.drawer = new Drawer(this.gl, vertexShader, fragmentShader);
         this.drawer.buildProgram();
+        this.renderer = new Renderer3D(this.gl, this.drawer.getGLProgram());
         this.dataCreator = new DrawDataCreator(this.gl);
-        this.rotationUniformLocation = this.gl.getUniformLocation(this.drawer.getGLProgram(), "rotation");
+        //this.rotationUniformLocation = this.gl.getUniformLocation(this.drawer.getGLProgram(), "rotation");
         this.configure_loop();
     }
 
@@ -41,11 +44,29 @@ class Main {
 
     draw() {
         let figureName = this.selectedFigureName();
-        let drawData = this.dataCreator.drawDataFromFigureName(figureName);
-        if (this.rotationUniformLocation) {
-            this.gl.uniformMatrix2fv(this.rotationUniformLocation, false, this.rotation());
+        //let drawData = this.dataCreator.drawDataFromFigureName(figureName);
+        
+        switch (figureName) {
+            case "Градиентный круг": {
+                this.renderer.rotateZ(10 / 1000.0 / 6 * 360);
+                let drawData = this.dataCreator.circleData();
+                this.drawer.draw(drawData);
+                break;
+            }
+            case "Текстурирование куба": {
+                this.renderer.rotateX(10 / 1000.0 / 6 * 360);
+                this.renderer.rotateY(2 / 1000.0 / 6 * 360);
+                this.renderer.rotateZ(4 / 1000.0 / 6 * 360);
+                this.gl.enable(this.gl.DEPTH_TEST);
+                this.gl.enable(this.gl.CULL_FACE);
+                let drawData = this.dataCreator.cubeData();
+                this.drawer.drawIndex(drawData);
+                break;
+            }
+            default: {
+                throw new Error(`Unknown figure name ${figureName}`);
+            }
         }
-        this.drawer.draw(drawData);
         requestAnimationFrame(() => {this.draw()});
     }
 

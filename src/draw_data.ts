@@ -1,8 +1,18 @@
-import {Vertex2D} from "./vertex2d"
+import {IBufferable} from "./ibufferable";
 import {IAttributeExtractor} from "./attribute_extractor"
 
+
+
 export interface DrawData {
-    vertices: Array<Vertex2D>;
+    vertices: Array<IBufferable>;
+    drawMethod: number;
+    pointsCount: number;
+    attributeExtractor: IAttributeExtractor
+}
+
+export interface IndexDrawData {
+    indices: Array<number>;
+    vertices: Array<IBufferable>;
     drawMethod: number;
     pointsCount: number;
     attributeExtractor: IAttributeExtractor

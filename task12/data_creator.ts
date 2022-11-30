@@ -1,5 +1,6 @@
-import {DrawData} from "../src/draw_data";
+import {DrawData, IndexDrawData} from "../src/draw_data";
 import {Vertex2DWithColor} from "../src/vertex2d";
+import {Vertex3DWithColor} from "../src/vertex3d";
 
 export class DrawDataCreator {
     constructor(readonly gl: WebGL2RenderingContext) {
@@ -12,17 +13,96 @@ export class DrawDataCreator {
                 return this.circleData();
             }
             case "Текстурирование куба": {
-
+                return this.cubeData();
             }
             default: {
                 throw new Error(`Unknown figure name ${figureName}`);
             }
         }
     }
+
+    public cubeData(): IndexDrawData {
+
+        let boxVertices = 
+        [ // X, Y, Z           R, G, B
+            // Top
+            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [177, 177, 177]),
+            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [177, 177, 177]),
+            new Vertex3DWithColor(1.0, 1.0, 1.0,   [177, 177, 177]),
+            new Vertex3DWithColor(1.0, 1.0, -1.0,   [177, 177, 177]),
     
-    private circleData(): DrawData {
+            // Left
+            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [191, 64, 177]),
+            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [191, 64, 177]),
+            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [191, 64, 177]),
+            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [191, 64, 177]),
+    
+            // Right
+            new Vertex3DWithColor(1.0, 1.0, 1.0,   [64, 64, 191]),
+            new Vertex3DWithColor(1.0, -1.0, 1.0,   [64, 64, 191]),
+            new Vertex3DWithColor(1.0, -1.0, -1.0,   [64, 64, 191]),
+            new Vertex3DWithColor(1.0, 1.0, -1.0,   [64, 64, 191]),
+    
+            // Front
+            new Vertex3DWithColor(1.0, 1.0, 1.0,   [255, 0, 38]),
+            new Vertex3DWithColor(1.0, -1.0, 1.0,   [255, 0, 38]),
+            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [255, 0, 38]),
+            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [255, 0, 38]),
+    
+            // Back
+            new Vertex3DWithColor(1.0, 1.0, -1.0,   [0, 255, 38]),
+            new Vertex3DWithColor(1.0, -1.0, -1.0,   [0, 255, 38]),
+            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [0, 255, 38]),
+            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [0, 255, 38]),
+    
+            // Bottom
+            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [177, 177, 255]),
+            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [177, 177, 255]),
+            new Vertex3DWithColor(1.0, -1.0, 1.0,   [177, 177, 255]),
+            new Vertex3DWithColor(1.0, -1.0, -1.0,   [177, 177, 255]),
+        ];
+    
+        let boxIndices =
+        [
+            // Top
+            0, 1, 2,
+            0, 2, 3,
+    
+            // Left
+            5, 4, 6,
+            6, 4, 7,
+    
+            // Right
+            8, 9, 10,
+            8, 10, 11,
+    
+            // Front
+            13, 12, 14,
+            15, 14, 12,
+    
+            // Back
+            16, 17, 18,
+            16, 18, 19,
+    
+            // Bottom
+            21, 20, 22,
+            22, 20, 23
+        ];
+
+        let countPoints = boxVertices.length;
+        let drawMethod = this.gl.TRIANGLES;
+        return {
+            "indices": boxIndices,
+            "vertices": boxVertices,
+            "drawMethod": drawMethod,
+            "pointsCount": countPoints,
+            "attributeExtractor": Vertex3DWithColor
+        };
+    }
+
+    public circleData(): DrawData {
         let centerColor: [number, number, number] = [255, 255, 255]
-        let center = new Vertex2DWithColor(0.0, 0.0, centerColor);
+        let center = new Vertex3DWithColor(0.0, 0.0, 0.0, centerColor);
         let vertices = [center];
         let countPoints = 360;
         let angle = 360 / countPoints;
@@ -31,7 +111,7 @@ export class DrawDataCreator {
             let degreeAngle = angle * i;
             let color = this.calculateColor(degreeAngle);
             let radAngle = this.toRadians(angle) * i;
-            vertices.push(new Vertex2DWithColor(Math.cos(radAngle), Math.sin(radAngle), color));
+            vertices.push(new Vertex3DWithColor(Math.cos(radAngle), Math.sin(radAngle), 0.0, color));
         }
 
         let drawMethod = this.gl.TRIANGLE_FAN;
@@ -40,7 +120,7 @@ export class DrawDataCreator {
             "vertices": vertices,
             "drawMethod": drawMethod,
             "pointsCount": countPoints + 2,
-            "attributeExtractor": Vertex2DWithColor
+            "attributeExtractor": Vertex3DWithColor
         };
     }
 

@@ -3,7 +3,7 @@ import {Shader} from "./shader";
 import {FloatBuffer} from "./buffer";
 import {IBufferable} from "./ibufferable"
 import {IAttributeExtractor} from "./attribute_extractor";
-import {DrawData} from "./draw_data";
+import {DrawData, IndexDrawData} from "./draw_data";
 
 export class Drawer {
     private gl: WebGL2RenderingContext;
@@ -12,6 +12,7 @@ export class Drawer {
     private fragmentShader: Shader;
     private buffer: FloatBuffer;
     private programBuilt: boolean = false;
+    private boxIndexBufferObject: WebGLBuffer | null;
     
     constructor(gl: WebGL2RenderingContext, vertexShaderText: string, fragmentShaderText: string) {
         this.gl = gl;
@@ -19,6 +20,8 @@ export class Drawer {
         this.vertexShader = new Shader(gl, vertexShaderText, gl.VERTEX_SHADER);
         this.fragmentShader = new Shader(gl, fragmentShaderText, gl.FRAGMENT_SHADER);
         this.buffer = new FloatBuffer(gl);
+        
+        this.boxIndexBufferObject = this.gl.createBuffer();
     }
 
     buildProgram(){
@@ -46,6 +49,22 @@ export class Drawer {
                                 0,          // how many to skip 
                                 drawData.pointsCount // how many to take
                           );
+    }
+
+    drawIndex(drawData: IndexDrawData) {
+        if (!this.programBuilt) {
+            throw new Error("Program not built");
+        }
+        this.clearBg();
+        this.prepareData(drawData.attributeExtractor, drawData.vertices);
+
+        if (this.boxIndexBufferObject == null) {
+            throw new Error("Index buffer not initialized");
+        }
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.boxIndexBufferObject);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(drawData.indices), this.gl.STATIC_DRAW);
+        this.gl.drawElements(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_SHORT, 0);
+    
     }
 
     private prepareData(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>) {
