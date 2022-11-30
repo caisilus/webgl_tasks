@@ -1,10 +1,10 @@
 import fragmentShader from "./shaders/shader_uniform.frag";
 import vertexShader from "./shaders/shader_uniform.vert";
 
-import {Drawer} from "./refactored_drawer";
-import {DrawData} from "./draw_data";
-import {DrawDataCreator} from "./data_creator";
-import {Vertex2D} from "./vertex2d";
+import {Drawer} from "../src/refactored_drawer";
+import {DrawData} from "../src/draw_data";
+import {DrawDataCreator} from "../src/data_creator";
+import {Vertex2D} from "../src/vertex2d";
 
 class Main {
     gl: WebGL2RenderingContext;
