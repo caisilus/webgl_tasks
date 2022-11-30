@@ -41,7 +41,11 @@ class Main {
     draw() {
         let figureName = this.selectedFigureName();
         let drawData = this.dataCreator.drawDataFromFigureName(figureName);
-        this.drawer.draw(drawData, [0, 255, 0]);
+        let color: [number, number, number] = [0, 255, 0];
+        let location = this.gl.getUniformLocation(this.drawer.getGLProgram(), "figureColor");
+        let normalizedColor = [color[0] / 255.0, color[1] / 255.0, color[2] / 255.0];
+        this.gl.uniform3fv(location, new Float32Array(normalizedColor));
+        this.drawer.draw(drawData);
     }
 
     private selectedFigureName(): string {

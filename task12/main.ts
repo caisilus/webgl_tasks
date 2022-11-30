@@ -9,14 +9,16 @@ class Main {
     select: HTMLSelectElement;
     drawer: Drawer;
     dataCreator: DrawDataCreator;
+    rotationUniformLocation: WebGLUniformLocation | null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas)
-        this.configure_button()
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         this.drawer = new Drawer(this.gl, vertexShader, fragmentShader);
         this.drawer.buildProgram();
         this.dataCreator = new DrawDataCreator(this.gl);
+        this.rotationUniformLocation = this.gl.getUniformLocation(this.drawer.getGLProgram(), "rotation");
+        this.configure_loop();
     }
 
     get_gl(canvas: HTMLCanvasElement): WebGL2RenderingContext {
@@ -33,15 +35,30 @@ class Main {
         return gl
     }
 
-    configure_button() {
-        const draw_button = document.querySelector("button#drawButton") as HTMLButtonElement;
-        draw_button.addEventListener("click", () => {this.draw()});
+    configure_loop() {
+        requestAnimationFrame(() => {this.draw()});
     }
 
     draw() {
         let figureName = this.selectedFigureName();
         let drawData = this.dataCreator.drawDataFromFigureName(figureName);
-        this.drawer.draw(drawData, [0, 255, 0]);
+        if (this.rotationUniformLocation) {
+            this.gl.uniformMatrix2fv(this.rotationUniformLocation, false, this.rotation());
+        }
+        this.drawer.draw(drawData);
+        requestAnimationFrame(() => {this.draw()});
+    }
+
+    rotation(): Float32Array {
+        let rotation = new Float32Array(4);
+        let radAngle = performance.now() / 1000.0 / 6 * 2 * Math.PI;
+        let sin = Math.sin(radAngle);
+        let cos = Math.cos(radAngle);
+        rotation[0] = cos;
+        rotation[1] = sin
+        rotation[2] = -sin;
+        rotation[3] = cos;
+        return rotation;
     }
 
     private selectedFigureName(): string {
