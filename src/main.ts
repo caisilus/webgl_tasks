@@ -2,17 +2,22 @@ import fragmentShader from "./shaders/shader_uniform.frag";
 import vertexShader from "./shaders/shader_uniform.vert";
 
 import {Drawer} from "./refactored_drawer";
-import {Vertex2D, Vertex2DWithColor} from "./vertex2d";
 import {DrawData} from "./draw_data";
+import {DrawDataCreator} from "./data_creator";
 
 class Main {
     gl: WebGL2RenderingContext;
     select: HTMLSelectElement;
+    drawer: Drawer;
+    dataCreator: DrawDataCreator;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas)
         this.configure_button()
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
+        this.drawer = new Drawer(this.gl, vertexShader, fragmentShader);
+        this.drawer.buildProgram();
+        this.dataCreator = new DrawDataCreator(this.gl);
     }
 
     get_gl(canvas: HTMLCanvasElement): WebGL2RenderingContext {
@@ -35,88 +40,14 @@ class Main {
     }
 
     draw() {
-        const drawer = new Drawer(this.gl, vertexShader, fragmentShader);
-        drawer.buildProgram();
         let figureName = this.selectedFigureName();
-        let drawData = this.drawDataFromFigureName(figureName);
-        drawer.draw(drawData.vertices, drawData.drawMethod, drawData.pointsCount);
+        let drawData = this.dataCreator.drawDataFromFigureName(figureName);
+        this.drawer.draw(drawData.vertices, drawData.drawMethod, drawData.pointsCount);
     }
 
     private selectedFigureName(): string {
         return this.select.options[this.select.options.selectedIndex].text;
-    }
-
-    private drawDataFromFigureName(name: string): DrawData {
-        switch (name) {
-            case "Треугольник": {
-                let vertices = [new Vertex2D(-1.0, 1.0), 
-                                new Vertex2D(0.0, -1.0),
-                                new Vertex2D(1.0, 1.0)];
-                let drawMethod = this.gl.TRIANGLES;
-                let pointsCount = 3;
-                return {
-                    "vertices": vertices,
-                    "drawMethod": drawMethod,
-                    "pointsCount": pointsCount
-                };
-            }
-            case "Прямоугольник": {
-                let vertices = [new Vertex2D(-1.0, -1.0), 
-                                new Vertex2D(-1.0, 1.0),
-                                new Vertex2D(1.0, -1.0),
-                                new Vertex2D(1.0, 1.0)];
-                let drawMethod = this.gl.TRIANGLE_STRIP;
-                let pointsCount = 4;
-                return {
-                    "vertices": vertices,
-                    "drawMethod": drawMethod,
-                    "pointsCount": pointsCount
-                };
-            }
-            case "Веер": {
-                let vertices = [new Vertex2D(0.0, 0.0)]
-                let angle = 30;
-                let count = 180 / angle;
-                let radAngle = angle / 180.0 * Math.PI
-                for (let i = 0; i <= count; i++) {
-                    vertices.push(new Vertex2D(Math.cos(radAngle * i), Math.sin(radAngle * i)));
-                }
-                let drawMethod = this.gl.TRIANGLE_FAN;
-                let pointsCount = count + 2;
-                return {
-                    "vertices": vertices,
-                    "drawMethod": drawMethod,
-                    "pointsCount": pointsCount
-                };
-            }
-            case "Пятиугольник": {
-                let vertices = [new Vertex2D(0.0, 0.0)]
-                let angle = 360 / 5;
-                let count = 5;
-                let radAngle = angle / 180.0 * Math.PI
-                for (let i = 0; i <= count; i++) {
-                    vertices.push(new Vertex2D(Math.cos(radAngle * i), Math.sin(radAngle * i)));
-                }
-                let drawMethod = this.gl.TRIANGLE_FAN;
-                let pointsCount = 5 + 2;
-                return {
-                    "vertices": vertices,
-                    "drawMethod": drawMethod,
-                    "pointsCount": pointsCount
-                };
-            }
-        }
-
-        return {
-            "vertices": [],
-            "drawMethod": this.gl.TRIANGLES,
-            "pointsCount": 0
-        };
-    }
-}
-
-function f() {
-    console.log("f")
+    } 
 }
 
 function main(){

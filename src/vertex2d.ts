@@ -15,7 +15,7 @@ export class Vertex2D implements IBufferable {
     }
 
     static attributes(gl: WebGLRenderingContext): Array<IAttribute> {
-        let coodinate = {
+        const coodinate = {
                             name: "vertPosition",
                             valuesCount: 2,
                             glType: gl.FLOAT,
