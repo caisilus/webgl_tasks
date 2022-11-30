@@ -2,7 +2,7 @@ import {ShaderProgram} from "./shader_program";
 import {Shader} from "./shader";
 import {FloatBuffer} from "./buffer";
 import {IBufferable} from "./ibufferable"
-import {IAttributeExtractor} from "./attribute_extractable";
+import {IAttributeExtractor} from "./attribute_extractor";
 import {DrawData} from "./draw_data";
 
 export class Drawer {
@@ -34,14 +34,13 @@ export class Drawer {
         this.fragmentShader.compile();
     }
 
-    draw(attributeExtractor: IAttributeExtractor, drawData: DrawData, 
-            color: [number, number, number] | null = null) {
+    draw(drawData: DrawData, color: [number, number, number] | null = null) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
 
         this.clearBg();
-        this.prepareData(attributeExtractor, drawData.vertices);
+        this.prepareData(drawData.attributeExtractor, drawData.vertices);
         this.gl.useProgram(this.program.program);
         if (color != null) {
             this.bindUniform("figureColor", color);

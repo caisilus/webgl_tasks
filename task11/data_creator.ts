@@ -1,5 +1,5 @@
-import {DrawData} from "./draw_data"
-import {Vertex2D} from "./vertex2d"
+import {DrawData} from "../src/draw_data"
+import {Vertex2D} from "../src/vertex2d"
 
 export class DrawDataCreator {
     constructor(readonly gl: WebGL2RenderingContext) {
@@ -35,7 +35,8 @@ export class DrawDataCreator {
         return {
             "vertices": vertices,
             "drawMethod": drawMethod,
-            "pointsCount": pointsCount
+            "pointsCount": pointsCount,
+            "attributeExtractor": Vertex2D
         };
     }
 
@@ -49,7 +50,8 @@ export class DrawDataCreator {
         return {
             "vertices": vertices,
             "drawMethod": drawMethod,
-            "pointsCount": pointsCount
+            "pointsCount": pointsCount,
+            "attributeExtractor": Vertex2D
         };
     }
 
@@ -66,7 +68,8 @@ export class DrawDataCreator {
         return {
             "vertices": vertices,
             "drawMethod": drawMethod,
-            "pointsCount": pointsCount
+            "pointsCount": pointsCount,
+            "attributeExtractor": Vertex2D
         };
     }
 
@@ -83,7 +86,8 @@ export class DrawDataCreator {
         return {
             "vertices": vertices,
             "drawMethod": drawMethod,
-            "pointsCount": pointsCount
+            "pointsCount": pointsCount,
+            "attributeExtractor": Vertex2D
         };
     }
 }

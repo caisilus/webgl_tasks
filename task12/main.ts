@@ -1,5 +1,5 @@
-import fragmentShader from "./shaders/shader_uniform.frag";
-import vertexShader from "./shaders/shader_uniform.vert";
+import fragmentShader from "./shaders/shader.frag";
+import vertexShader from "./shaders/shader.vert";
 
 import {Drawer} from "../src/drawer";
 import {DrawDataCreator} from "./data_creator";
