@@ -48,15 +48,17 @@ class Main {
         
         switch (figureName) {
             case "Градиентный круг": {
-                this.renderer.rotateZ(10 / 1000.0 / 6 * 360);
+                this.renderer.rotate([0, 0, performance.now() / 1000.0 * 60]);
+                this.gl.disable(this.gl.DEPTH_TEST);
+                this.gl.disable(this.gl.CULL_FACE);
                 let drawData = this.dataCreator.circleData();
                 this.drawer.draw(drawData);
                 break;
             }
             case "Текстурирование куба": {
-                this.renderer.rotateX(10 / 1000.0 / 6 * 360);
-                this.renderer.rotateY(2 / 1000.0 / 6 * 360);
-                this.renderer.rotateZ(4 / 1000.0 / 6 * 360);
+                this.renderer.rotate([performance.now() / 1000.0 * 60,
+                performance.now() / 2 / 1000.0 * 60,
+                performance.now() / 5 / 1000.0 * 60]);
                 this.gl.enable(this.gl.DEPTH_TEST);
                 this.gl.enable(this.gl.CULL_FACE);
                 let drawData = this.dataCreator.cubeData();

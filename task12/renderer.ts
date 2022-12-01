@@ -51,28 +51,32 @@ export class Renderer3D{
         this.gl.uniformMatrix4fv(this.matProjUniformLocation, false, this.matProj);
     }
 
-    rotateX(angle: number) {
+    rotate(angle: [number, number, number]) {
+        this.rotateX(angle[0]);
+        this.rotateY(angle[1]);
+        this.rotateZ(angle[2]);
+        var rotateXYMatrix = new Float32Array(16);
+        mat4.mul(rotateXYMatrix, this.xRotationMatrix, this.yRotationMatrix);
+        mat4.mul(this.matWorld, rotateXYMatrix, this.zRotationMatrix);
+        this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
+    }
+
+    private rotateX(angle: number) {
         var identityMatrix = new Float32Array(16);
         mat4.identity(identityMatrix);
         mat4.rotateX(this.xRotationMatrix, identityMatrix, glMatrix.toRadian(angle));
-        mat4.mul(this.matWorld, this.xRotationMatrix, this.matWorld);
-        this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     }
 
-    rotateY(angle: number) {
+    private rotateY(angle: number) {
         var identityMatrix = new Float32Array(16);
         mat4.identity(identityMatrix);
         mat4.rotateY(this.yRotationMatrix, identityMatrix, glMatrix.toRadian(angle));
-        mat4.mul(this.matWorld, this.yRotationMatrix, this.matWorld);
-        this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     }
 
-    rotateZ(angle: number) {
+    private rotateZ(angle: number) {
         var identityMatrix = new Float32Array(16);
         mat4.identity(identityMatrix);
         mat4.rotateZ(this.zRotationMatrix, identityMatrix, glMatrix.toRadian(angle));
-        mat4.mul(this.matWorld, this.zRotationMatrix, this.matWorld);
-        this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     }
 
     translate(dx: number, dy: number, dz: number) {
