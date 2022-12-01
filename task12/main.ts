@@ -65,13 +65,20 @@ class Main {
                 this.drawer.drawIndex(drawData);
                 break;
             }
+            case "Градиентный тетраэдр":{
+                this.renderer.rotate([60,15,50]);                
+                this.gl.enable(this.gl.DEPTH_TEST);
+                this.gl.enable(this.gl.CULL_FACE);
+                let drawData = this.dataCreator.tetrahedronData();
+                this.drawer.drawIndex(drawData);
+                break;
+            }
             default: {
                 throw new Error(`Unknown figure name ${figureName}`);
             }
         }
         requestAnimationFrame(() => {this.draw()});
     }
-
     rotation(): Float32Array {
         let rotation = new Float32Array(4);
         let radAngle = performance.now() / 1000.0 / 6 * 2 * Math.PI;
