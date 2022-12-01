@@ -26,40 +26,40 @@ export class DrawDataCreator {
         let boxVertices = 
         [ // X, Y, Z           R, G, B
             // Top
-            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [177, 177, 177]),
-            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [177, 177, 177]),
-            new Vertex3DWithColor(1.0, 1.0, 1.0,   [177, 177, 177]),
-            new Vertex3DWithColor(1.0, 1.0, -1.0,   [177, 177, 177]),
+            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [177, 177, 177], [0.0, 0.0]),
+            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [177, 177, 177], [0.0, 1.0]),
+            new Vertex3DWithColor(1.0, 1.0, 1.0,   [177, 177, 177], [1.0, 1.0]),
+            new Vertex3DWithColor(1.0, 1.0, -1.0,   [177, 177, 177], [1.0, 0.0]),
     
             // Left
-            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [191, 64, 177]),
-            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [191, 64, 177]),
-            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [191, 64, 177]),
-            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [191, 64, 177]),
+            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [191, 64, 177], [0.0, 0.0]),
+            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [191, 64, 177], [1.0, 0.0]),
+            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [191, 64, 177], [1.0, 1.0]),
+            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [191, 64, 177], [0.0, 1.0]),
     
             // Right
-            new Vertex3DWithColor(1.0, 1.0, 1.0,   [64, 64, 191]),
-            new Vertex3DWithColor(1.0, -1.0, 1.0,   [64, 64, 191]),
-            new Vertex3DWithColor(1.0, -1.0, -1.0,   [64, 64, 191]),
-            new Vertex3DWithColor(1.0, 1.0, -1.0,   [64, 64, 191]),
+            new Vertex3DWithColor(1.0, 1.0, 1.0,   [64, 64, 191], [1.0, 1.0]),
+            new Vertex3DWithColor(1.0, -1.0, 1.0,   [64, 64, 191], [0.0, 1.0]),
+            new Vertex3DWithColor(1.0, -1.0, -1.0,   [64, 64, 191], [0.0, 0.0]),
+            new Vertex3DWithColor(1.0, 1.0, -1.0,   [64, 64, 191], [1.0, 0.0]),
     
             // Front
-            new Vertex3DWithColor(1.0, 1.0, 1.0,   [255, 0, 38]),
-            new Vertex3DWithColor(1.0, -1.0, 1.0,   [255, 0, 38]),
-            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [255, 0, 38]),
-            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [255, 0, 38]),
+            new Vertex3DWithColor(1.0, 1.0, 1.0,   [255, 0, 38], [1.0, 1.0]),
+            new Vertex3DWithColor(1.0, -1.0, 1.0,   [255, 0, 38], [1.0, 0.0]),
+            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [255, 0, 38], [0.0, 0.0]),
+            new Vertex3DWithColor(-1.0, 1.0, 1.0,   [255, 0, 38], [0.0, 1.0]),
     
             // Back
-            new Vertex3DWithColor(1.0, 1.0, -1.0,   [0, 255, 38]),
-            new Vertex3DWithColor(1.0, -1.0, -1.0,   [0, 255, 38]),
-            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [0, 255, 38]),
-            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [0, 255, 38]),
+            new Vertex3DWithColor(1.0, 1.0, -1.0,   [0, 255, 38], [0.0, 0.0]),
+            new Vertex3DWithColor(1.0, -1.0, -1.0,   [0, 255, 38], [0.0, 1.0]),
+            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [0, 255, 38], [1.0, 1.0]),
+            new Vertex3DWithColor(-1.0, 1.0, -1.0,   [0, 255, 38], [1.0, 0.0]),
     
             // Bottom
-            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [177, 177, 255]),
-            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [177, 177, 255]),
-            new Vertex3DWithColor(1.0, -1.0, 1.0,   [177, 177, 255]),
-            new Vertex3DWithColor(1.0, -1.0, -1.0,   [177, 177, 255]),
+            new Vertex3DWithColor(-1.0, -1.0, -1.0,   [177, 177, 255], [1.0, 1.0]),
+            new Vertex3DWithColor(-1.0, -1.0, 1.0,   [177, 177, 255], [1.0, 0.0]),
+            new Vertex3DWithColor(1.0, -1.0, 1.0,   [177, 177, 255], [0.0, 0.0]),
+            new Vertex3DWithColor(1.0, -1.0, -1.0,   [177, 177, 255], [0.0, 1.0]),
         ];
     
         let boxIndices =

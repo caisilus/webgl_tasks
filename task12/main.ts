@@ -2,14 +2,15 @@ import fragmentShader from "./shaders/shader.frag";
 import vertexShader from "./shaders/shader3d.vert";
 
 import {Drawer} from "../src/drawer";
+import {TextureController} from "./texture_contoller";
 import {DrawDataCreator} from "./data_creator";
 import {Renderer3D} from "./renderer";
-
 class Main {
     gl: WebGL2RenderingContext;
     select: HTMLSelectElement;
     drawer: Drawer;
     renderer: Renderer3D;
+    texture_controller: TextureController;
     dataCreator: DrawDataCreator;
     //rotationUniformLocation: WebGLUniformLocation | null;
 
@@ -19,8 +20,13 @@ class Main {
         this.drawer = new Drawer(this.gl, vertexShader, fragmentShader);
         this.drawer.buildProgram();
         this.renderer = new Renderer3D(this.gl, this.drawer.getGLProgram());
+
+        this.texture_controller = new TextureController(this.gl, this.drawer.getGLProgram());
+        this.texture_controller.load_textures();
+
+        document.addEventListener('keyup', (e) => {this.onKeyUp(e)}, false);
+        
         this.dataCreator = new DrawDataCreator(this.gl);
-        //this.rotationUniformLocation = this.gl.getUniformLocation(this.drawer.getGLProgram(), "rotation");
         this.configure_loop();
     }
 
@@ -44,23 +50,24 @@ class Main {
 
     draw() {
         let figureName = this.selectedFigureName();
-        //let drawData = this.dataCreator.drawDataFromFigureName(figureName);
         
         switch (figureName) {
             case "Градиентный круг": {
-                this.renderer.rotate([0, 0, performance.now() / 1000.0 * 60]);
                 this.gl.disable(this.gl.DEPTH_TEST);
                 this.gl.disable(this.gl.CULL_FACE);
+                this.texture_controller.disable_textures();
+                this.renderer.rotate([0, 0, performance.now() / 1000.0 * 60]);
                 let drawData = this.dataCreator.circleData();
                 this.drawer.draw(drawData);
                 break;
             }
             case "Текстурирование куба": {
+                this.gl.enable(this.gl.DEPTH_TEST);
+                this.gl.enable(this.gl.CULL_FACE);
                 this.renderer.rotate([performance.now() / 1000.0 * 60,
                 performance.now() / 2 / 1000.0 * 60,
                 performance.now() / 5 / 1000.0 * 60]);
-                this.gl.enable(this.gl.DEPTH_TEST);
-                this.gl.enable(this.gl.CULL_FACE);
+                this.texture_controller.bind_textures();
                 let drawData = this.dataCreator.cubeData();
                 this.drawer.drawIndex(drawData);
                 break;
@@ -70,6 +77,31 @@ class Main {
             }
         }
         requestAnimationFrame(() => {this.draw()});
+    }
+
+    onKeyUp(event: KeyboardEvent) {
+        switch (event.key) {
+            case "w":{
+                console.log(this);
+                this.texture_controller.increase_color_mix();
+                break;
+            }
+            case "s":{
+                this.texture_controller.decrease_color_mix();
+                break;
+            }
+            case "a":{
+                this.texture_controller.decrease_textures_mix();
+                break;
+            }
+            case "d":{
+                this.texture_controller.increase_textures_mix();
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     }
 
     rotation(): Float32Array {

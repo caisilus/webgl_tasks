@@ -83,7 +83,7 @@ export class Drawer {
         return this.program.program; 
     }
 
-    clearBg(color: [number, number, number] = [0, 0, 0]) {
+    clearBg(color: [number, number, number] = [0,0, 0]) {
         this.gl.clearColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     }
