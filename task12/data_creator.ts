@@ -1,5 +1,4 @@
 import {DrawData, IndexDrawData} from "../src/draw_data";
-import {Vertex2DWithColor} from "../src/vertex2d";
 import {Vertex3DWithColor} from "../src/vertex3d";
 
 export class DrawDataCreator {
@@ -19,6 +18,31 @@ export class DrawDataCreator {
                 throw new Error(`Unknown figure name ${figureName}`);
             }
         }
+    }
+
+    public tetrahedronData(): IndexDrawData{
+        let vertices = [
+            // X, Y, Z           R, G, B
+            new Vertex3DWithColor(1,1,-1, [255,255,0]), //Y
+            new Vertex3DWithColor(1,-1,1, [255,0,255]), //M
+            new Vertex3DWithColor(-1,1,1, [0,255,255]), //C
+            new Vertex3DWithColor(-1,-1,-1, [255,255,255])//W
+        ];
+        let indices = [
+            1,0,2,
+            3,1,2,
+            3,0,1,
+            2,0,3
+        ];
+        let countPoints = vertices.length;
+        let drawMethod = this.gl.TRIANGLES;
+        return {
+            "indices": indices,
+            "vertices": vertices,
+            "drawMethod": drawMethod,
+            "pointsCount": countPoints,
+            "attributeExtractor": Vertex3DWithColor
+        };
     }
 
     public cubeData(): IndexDrawData {

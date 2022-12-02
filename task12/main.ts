@@ -12,6 +12,7 @@ class Main {
     renderer: Renderer3D;
     texture_controller: TextureController;
     dataCreator: DrawDataCreator;
+    comandmode: string;
     //rotationUniformLocation: WebGLUniformLocation | null;
 
     constructor(canvas: HTMLCanvasElement) {
@@ -23,6 +24,7 @@ class Main {
 
         this.texture_controller = new TextureController(this.gl, this.drawer.getGLProgram());
         this.texture_controller.load_textures();
+        this.comandmode = "idel";
 
         document.addEventListener('keyup', (e) => {this.onKeyUp(e)}, false);
         
@@ -53,6 +55,7 @@ class Main {
         
         switch (figureName) {
             case "Градиентный круг": {
+                this.comandmode = "idel";
                 this.gl.disable(this.gl.DEPTH_TEST);
                 this.gl.disable(this.gl.CULL_FACE);
                 this.texture_controller.disable_textures();
@@ -62,6 +65,7 @@ class Main {
                 break;
             }
             case "Текстурирование куба": {
+                this.comandmode = "mix";
                 this.gl.enable(this.gl.DEPTH_TEST);
                 this.gl.enable(this.gl.CULL_FACE);
                 this.renderer.rotate([performance.now() / 1000.0 * 60,
@@ -69,6 +73,16 @@ class Main {
                 performance.now() / 5 / 1000.0 * 60]);
                 this.texture_controller.bind_textures();
                 let drawData = this.dataCreator.cubeData();
+                this.drawer.drawIndex(drawData);
+                break;
+            }
+            case "Градиентный тетраэдр":{
+                this.comandmode = "move";
+                this.gl.enable(this.gl.DEPTH_TEST);
+                this.gl.enable(this.gl.CULL_FACE);
+                this.texture_controller.disable_textures();
+                this.renderer.rotate([60,15,50]);                
+                let drawData = this.dataCreator.tetrahedronData();
                 this.drawer.drawIndex(drawData);
                 break;
             }
@@ -82,38 +96,58 @@ class Main {
     onKeyUp(event: KeyboardEvent) {
         switch (event.key) {
             case "w":{
-                console.log(this);
-                this.texture_controller.increase_color_mix();
+                if (this.comandmode == "move"){
+                    console.log("w");
+                    this.renderer.translate(0,0.1,0);
+                }
+                if (this.comandmode == "mix"){
+                    this.texture_controller.increase_color_mix();
+                }
                 break;
             }
             case "s":{
-                this.texture_controller.decrease_color_mix();
+                if (this.comandmode == "move"){
+                    this.renderer.translate(0,-0.1,0);
+                }
+                if (this.comandmode == "mix"){
+                    this.texture_controller.decrease_color_mix();
+                }
                 break;
             }
             case "a":{
-                this.texture_controller.decrease_textures_mix();
+                if (this.comandmode == "move"){
+                    this.renderer.translate(-0.1,0,0);
+                }
+                if (this.comandmode == "mix"){
+                    this.texture_controller.decrease_textures_mix();
+                }
                 break;
             }
             case "d":{
-                this.texture_controller.increase_textures_mix();
+                if (this.comandmode == "move"){
+                    this.renderer.translate(0.1,0,0);
+                }
+                if (this.comandmode == "mix"){
+                    this.texture_controller.increase_textures_mix();
+                }
+                break;
+            }
+            case "q":{
+                if (this.comandmode == "move"){
+                    this.renderer.translate(0,0,0.1);
+                }
+                break;
+            }
+            case "e":{
+                if (this.comandmode == "move"){
+                    this.renderer.translate(0,0,-0.1);
+                }
                 break;
             }
             default: {
                 break;
             }
         }
-    }
-
-    rotation(): Float32Array {
-        let rotation = new Float32Array(4);
-        let radAngle = performance.now() / 1000.0 / 6 * 2 * Math.PI;
-        let sin = Math.sin(radAngle);
-        let cos = Math.cos(radAngle);
-        rotation[0] = cos;
-        rotation[1] = sin
-        rotation[2] = -sin;
-        rotation[3] = cos;
-        return rotation;
     }
 
     private selectedFigureName(): string {

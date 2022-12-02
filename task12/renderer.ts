@@ -23,6 +23,10 @@ export class Renderer3D{
 	private yRotationMatrix: Float32Array = new Float32Array(16);
     private zRotationMatrix: Float32Array = new Float32Array(16);
 
+    private translationMatrix: Float32Array = new Float32Array(16);
+    private scalingMatrix: Float32Array = new Float32Array(16);
+    private rotateMatrix: Float32Array = new Float32Array(16);
+
 
     constructor(readonly gl: WebGL2RenderingContext, readonly programm: WebGLProgram) {
         this.gl = gl;
@@ -31,11 +35,16 @@ export class Renderer3D{
         this.matViewUniformLocation = this.gl.getUniformLocation(programm, "mView");
         this.matProjUniformLocation = this.gl.getUniformLocation(programm, "mProj");
 
+
+
         this.matWorld = new Float32Array(16);
         this.matView = new Float32Array(16);
         this.matProj = new Float32Array(16);
 
         mat4.identity(this.matWorld);
+        mat4.identity(this.translationMatrix);
+        mat4.identity(this.scalingMatrix);
+        mat4.identity(this.rotateMatrix);
         this.setUpView();
         this.setUpProjection();
         gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
@@ -57,8 +66,8 @@ export class Renderer3D{
         this.rotateZ(angle[2]);
         var rotateXYMatrix = new Float32Array(16);
         mat4.mul(rotateXYMatrix, this.xRotationMatrix, this.yRotationMatrix);
-        mat4.mul(this.matWorld, rotateXYMatrix, this.zRotationMatrix);
-        this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
+        mat4.mul(this.rotateMatrix, rotateXYMatrix, this.zRotationMatrix);
+        this.buildWorldMatrix();
     }
 
     private rotateX(angle: number) {
@@ -80,12 +89,19 @@ export class Renderer3D{
     }
 
     translate(dx: number, dy: number, dz: number) {
-        mat4.translate(this.matWorld, this.matWorld, [dx, dy, dz]);
-        this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
+        mat4.translate(this.translationMatrix, this.translationMatrix, [dx, dy, dz]);
+        this.buildWorldMatrix();
     }
 
     scale(dx: number, dy: number, dz: number) {
-        mat4.scale(this.matWorld, this.matWorld, [dx, dy, dz]);
+        mat4.scale(this.scalingMatrix, this.scalingMatrix, [dx, dy, dz]);
+        this.buildWorldMatrix();
+    }
+
+    buildWorldMatrix(){
+        var scaleTranslateMatrix = new Float32Array(16);
+        mat4.mul(scaleTranslateMatrix, this.scalingMatrix, this.translationMatrix);
+        mat4.mul(this.matWorld, scaleTranslateMatrix, this.rotateMatrix);
         this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     }
 
