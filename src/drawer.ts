@@ -1,6 +1,6 @@
 import {ShaderProgram} from "./shader_program";
 import {Shader} from "./shader";
-import {FloatBuffer} from "./buffer";
+import {DataChangeFrequency, FloatBuffer} from "./buffer";
 import {IBufferable} from "./ibufferable"
 import {IAttributeExtractor} from "./attribute_extractor";
 import {DrawData, IndexDrawData} from "./draw_data";
@@ -38,7 +38,7 @@ export class Drawer {
         this.fragmentShader.compile();
     }
 
-    draw(drawData: DrawData) {
+    draw(drawData: DrawData, dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
@@ -51,7 +51,7 @@ export class Drawer {
                           );
     }
 
-    drawIndex(drawData: IndexDrawData) {
+    drawIndex(drawData: IndexDrawData, dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
         if (!this.programBuilt) {
             throw new Error("Program not built");
         }
@@ -64,7 +64,6 @@ export class Drawer {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.boxIndexBufferObject);
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(drawData.indices), this.gl.STATIC_DRAW);
         this.gl.drawElements(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_SHORT, 0);
-    
     }
 
     private prepareData(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>) {

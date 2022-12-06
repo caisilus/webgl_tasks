@@ -2,6 +2,7 @@ import {Transformator} from './transformator';
 import {TextureController} from './texture_controller';
 import {DrawDataCreator} from "./data_creator";
 import {Drawer} from "../src/drawer";
+import {DataChangeFrequency} from "../src/buffer";
 
 export class CubeMode {
     constructor(private transformator: Transformator, private textureController: TextureController, 
@@ -25,7 +26,7 @@ export class CubeMode {
         performance.now() / 5 / 1000.0 * 60]);
         this.textureController.bind_textures();
         let drawData = this.dataCreator.cubeData();
-        drawer.drawIndex(drawData);
+        drawer.drawIndex(drawData, DataChangeFrequency.STREAM);
     }
 
     onKeyUp(event: KeyboardEvent) {

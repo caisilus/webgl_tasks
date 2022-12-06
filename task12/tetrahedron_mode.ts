@@ -2,6 +2,7 @@ import {Transformator} from './transformator';
 import {TextureController} from './texture_controller';
 import {DrawDataCreator} from "./data_creator";
 import {Drawer} from "../src/drawer";
+import {DataChangeFrequency} from "../src/buffer";
 
 export class TetrahedronMode {
     constructor(private transformator: Transformator, private textureController: TextureController, 
@@ -22,7 +23,7 @@ export class TetrahedronMode {
 
     update(drawer: Drawer) {
         let drawData = this.dataCreator.tetrahedronData();
-        drawer.drawIndex(drawData);
+        drawer.drawIndex(drawData, DataChangeFrequency.STREAM);
     }
 
     onKeyUp(event: KeyboardEvent) {

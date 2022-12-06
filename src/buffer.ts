@@ -2,6 +2,12 @@ import {IBufferable} from "./ibufferable";
 import {IAttribute} from "./attribute";
 import {ShaderProgram} from "./shader_program";
 
+export enum DataChangeFrequency {
+    STATIC,
+    DYNAMIC,
+    STREAM
+};
+
 export class FloatBuffer {
     gl: WebGL2RenderingContext
     glBuffer: WebGLBuffer;
@@ -16,10 +22,11 @@ export class FloatBuffer {
         this.glBuffer = glBuffer;
     }
 
-    putData(data: Array<IBufferable>) {
+    putData(data: Array<IBufferable>, drawFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
         let plainData = this.getPlainData(data);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.glBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, plainData, this.gl.STATIC_DRAW);
+        const freq = this.dataChangeFrequencyToGLconst(drawFrequency);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, plainData, freq);
     }
 
     private getPlainData(bufferableData: Array<IBufferable>) {
@@ -34,6 +41,20 @@ export class FloatBuffer {
         }
 
         return plainData
+    }
+
+    private dataChangeFrequencyToGLconst(dataChangeFrequency: DataChangeFrequency): number {
+        switch (dataChangeFrequency) {
+            case DataChangeFrequency.STATIC: {
+                return this.gl.STATIC_DRAW;
+            }
+            case DataChangeFrequency.DYNAMIC: {
+                return this.gl.DYNAMIC_DRAW;
+            }
+            case DataChangeFrequency.STREAM: {
+                return this.gl.STATIC_DRAW;
+            }
+        }
     }
 
     bindAttribute(attribute: IAttribute, program: WebGLProgram) {

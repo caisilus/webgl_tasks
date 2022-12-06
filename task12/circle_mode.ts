@@ -2,6 +2,7 @@ import {Transformator} from './transformator';
 import {TextureController} from './texture_controller';
 import {DrawDataCreator} from "./data_creator";
 import {Drawer} from "../src/drawer";
+import {DataChangeFrequency} from "../src/buffer";
 
 export class CircleMode {
     constructor(private transformator: Transformator, private textureController: TextureController, 
@@ -23,7 +24,7 @@ export class CircleMode {
     update(drawer: Drawer) {
         this.transformator.rotate([0, 0, performance.now() / 1000.0 * 60]);
         let drawData = this.dataCreator.circleData();
-        drawer.draw(drawData);
+        drawer.draw(drawData, DataChangeFrequency.STREAM);
     }
 
     onKeyUp(event: KeyboardEvent) {
