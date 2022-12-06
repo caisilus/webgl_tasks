@@ -1,5 +1,5 @@
 import { glMatrix, mat4 } from "gl-matrix";
-import {DrawData} from "../src/draw_data";
+import {DrawData} from "./draw_data";
 
 export class Renderer3D{
     private cameraPosition: Float32Array = new Float32Array([0, 0, -5]);
@@ -34,8 +34,6 @@ export class Renderer3D{
         this.matWorldUniformLocation = this.gl.getUniformLocation(programm, "mWorld");
         this.matViewUniformLocation = this.gl.getUniformLocation(programm, "mView");
         this.matProjUniformLocation = this.gl.getUniformLocation(programm, "mProj");
-
-
 
         this.matWorld = new Float32Array(16);
         this.matView = new Float32Array(16);
@@ -95,6 +93,11 @@ export class Renderer3D{
 
     scale(dx: number, dy: number, dz: number) {
         mat4.scale(this.scalingMatrix, this.scalingMatrix, [dx, dy, dz]);
+        this.buildWorldMatrix();
+    }
+
+    set_default_position(){
+        mat4.identity(this.translationMatrix);
         this.buildWorldMatrix();
     }
 

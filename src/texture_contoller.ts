@@ -1,4 +1,4 @@
-import {Texture} from "../src/texture";
+import {Texture} from "./texture";
 import Cat from '../src/images/cat.png';
 import Goodman from '../src/images/goodman.png';
 import Seal from '../src/images/seal.png';
