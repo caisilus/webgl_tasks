@@ -5,7 +5,7 @@ import {ProgramBuilder} from "../src/program_builder";
 import {Drawer} from "../src/drawer";
 import {TextureController} from "./texture_controller";
 import {DrawDataCreator} from "./data_creator";
-import {Transformator} from "./transformator";
+import {Transformator} from "../src/transformator";
 import {ControlMode} from "./control_mode";
 import {CircleMode} from "./circle_mode";
 import {CubeMode} from "./cube_mode";

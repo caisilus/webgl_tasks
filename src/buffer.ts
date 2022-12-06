@@ -58,9 +58,9 @@ export class FloatBuffer {
     }
 
     bindAttribute(attribute: IAttribute, program: WebGLProgram) {
-        var positionAttributeLocation = this.gl.getAttribLocation(program, attribute.name);
+        let attributeLocation = this.gl.getAttribLocation(program, attribute.name);
          
-        this.gl.vertexAttribPointer(positionAttributeLocation, // attr location
+        this.gl.vertexAttribPointer(attributeLocation, // attr location
                                     attribute.valuesCount, // number of elements per attribute
                                     attribute.glType, // type of elements
                                     attribute.dataNormalized, // is data normalized
@@ -69,6 +69,16 @@ export class FloatBuffer {
                                                               //        to this attr
                                    );
 
-        this.gl.enableVertexAttribArray(positionAttributeLocation);
+        this.gl.enableVertexAttribArray(attributeLocation);
+
+        return attributeLocation;
+    }
+}
+
+export class InstanceAttributesBuffer extends FloatBuffer {
+    bindAttribute(attribute: IAttribute, program: WebGLProgram) {
+        let attributeLocation = super.bindAttribute(attribute, program);
+        this.gl.vertexAttribDivisor(attributeLocation, 1);
+        return attributeLocation;
     }
 }

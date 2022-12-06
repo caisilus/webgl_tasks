@@ -1,5 +1,5 @@
 import { glMatrix, mat3, mat4 } from "gl-matrix";
-import {DrawData} from "../src/draw_data";
+import {DrawData} from "./draw_data";
 
 export class Transformator{
     private cameraPosition: Float32Array = new Float32Array([0, 0, -5]);

@@ -1,4 +1,4 @@
-import {Transformator} from './transformator';
+import {Transformator} from '../src/transformator';
 import {TextureController} from './texture_controller';
 import {DrawDataCreator} from "./data_creator";
 import {Drawer} from "../src/drawer";
