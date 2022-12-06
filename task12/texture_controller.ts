@@ -23,7 +23,6 @@ export class TextureController{
         this.textures_mix = 0.0;
         this.set_color_mix();
         this.set_textures_mix();
-
         this.load_textures();
     }
 
