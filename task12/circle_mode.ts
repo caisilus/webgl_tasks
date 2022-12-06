@@ -24,7 +24,7 @@ export class CircleMode {
     update(drawer: Drawer) {
         this.transformator.rotate([0, 0, performance.now() / 1000.0 * 60]);
         let drawData = this.dataCreator.circleData();
-        drawer.draw(drawData, DataChangeFrequency.STREAM);
+        drawer.draw(drawData);
     }
 
     onKeyUp(event: KeyboardEvent) {

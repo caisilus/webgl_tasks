@@ -23,7 +23,7 @@ export class TetrahedronMode {
 
     update(drawer: Drawer) {
         let drawData = this.dataCreator.tetrahedronData();
-        drawer.drawIndex(drawData, DataChangeFrequency.STREAM);
+        drawer.drawIndex(drawData);
     }
 
     onKeyUp(event: KeyboardEvent) {

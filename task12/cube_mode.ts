@@ -26,7 +26,7 @@ export class CubeMode {
         performance.now() / 5 / 1000.0 * 60]);
         this.textureController.bind_textures();
         let drawData = this.dataCreator.cubeData();
-        drawer.drawIndex(drawData, DataChangeFrequency.STREAM);
+        drawer.drawIndex(drawData);
     }
 
     onKeyUp(event: KeyboardEvent) {

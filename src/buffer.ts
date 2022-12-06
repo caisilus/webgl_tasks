@@ -1,6 +1,5 @@
 import {IBufferable} from "./ibufferable";
 import {IAttribute} from "./attribute";
-import {ShaderProgram} from "./shader_program";
 
 export enum DataChangeFrequency {
     STATIC,
