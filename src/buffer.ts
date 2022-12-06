@@ -7,6 +7,21 @@ export enum DataChangeFrequency {
     STREAM
 };
 
+export function dataChangeFrequencyToGLconst(gl: WebGLRenderingContext, 
+                                             dataChangeFrequency: DataChangeFrequency): number {
+    switch (dataChangeFrequency) {
+        case DataChangeFrequency.STATIC: {
+            return gl.STATIC_DRAW;
+        }
+        case DataChangeFrequency.DYNAMIC: {
+            return gl.DYNAMIC_DRAW;
+        }
+        case DataChangeFrequency.STREAM: {
+            return gl.STATIC_DRAW;
+        }
+    }
+}
+
 export class FloatBuffer {
     gl: WebGL2RenderingContext
     glBuffer: WebGLBuffer;
@@ -24,7 +39,7 @@ export class FloatBuffer {
     putData(data: Array<IBufferable>, drawFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
         let plainData = this.getPlainData(data);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.glBuffer);
-        const freq = this.dataChangeFrequencyToGLconst(drawFrequency);
+        const freq = dataChangeFrequencyToGLconst(this.gl, drawFrequency);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, plainData, freq);
     }
 
@@ -40,20 +55,6 @@ export class FloatBuffer {
         }
 
         return plainData
-    }
-
-    private dataChangeFrequencyToGLconst(dataChangeFrequency: DataChangeFrequency): number {
-        switch (dataChangeFrequency) {
-            case DataChangeFrequency.STATIC: {
-                return this.gl.STATIC_DRAW;
-            }
-            case DataChangeFrequency.DYNAMIC: {
-                return this.gl.DYNAMIC_DRAW;
-            }
-            case DataChangeFrequency.STREAM: {
-                return this.gl.STATIC_DRAW;
-            }
-        }
     }
 
     bindAttribute(attribute: IAttribute, program: WebGLProgram) {

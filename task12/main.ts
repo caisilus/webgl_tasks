@@ -42,6 +42,9 @@ class Main {
                                          this.dataCreator, this.gl);
 
         this.controlMode = this.circleMode;
+        console.log("before setup");
+        this.controlMode.setup(this.drawer);
+        console.log("after setup");
         this.select.addEventListener('change', (e) => { this.onSelectChange(e); });
         document.addEventListener('keyup', (e) => {this.onKeyUp(e)}, false);
         this.configure_loop();
@@ -71,6 +74,7 @@ class Main {
     }
 
     onSelectChange(event: Event) {
+        console.log("onSelectChange");
         const figureName = this.selectedFigureName();
         switch (figureName) {
             case "Градиентный круг": {
@@ -89,7 +93,7 @@ class Main {
                 throw new Error(`Unknown figure name ${figureName}`);
             }
         }
-        this.controlMode.setup();
+        this.controlMode.setup(this.drawer);
     }
 
     onKeyUp(event: KeyboardEvent) {

@@ -1,7 +1,7 @@
 import {Drawer} from "../src/drawer";
 
 export interface ControlMode {
-    setup(): void
+    setup(drawer: Drawer): void;
     
     onKeyUp(event: KeyboardEvent): void;
  

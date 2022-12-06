@@ -51,6 +51,7 @@ class Main {
         let location = this.gl.getUniformLocation(this.program, "figureColor");
         let normalizedColor = [color[0] / 255.0, color[1] / 255.0, color[2] / 255.0];
         this.gl.uniform3fv(location, new Float32Array(normalizedColor));
+        this.drawer.prepareVertices(drawData.attributeExtractor, drawData.vertices);
         this.drawer.draw(drawData);
     }
 
