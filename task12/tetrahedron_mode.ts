@@ -2,17 +2,24 @@ import {Transformator} from '../src/transformator';
 import {TextureController} from './texture_controller';
 import {DrawDataCreator} from "./data_creator";
 import {Drawer} from "../src/drawer";
+import {DataChangeFrequency} from "../src/buffer";
+import {IndexDrawData} from '../src/draw_data';
 
 export class TetrahedronMode {
+    tetrahedronData: IndexDrawData;
+
     constructor(private transformator: Transformator, private textureController: TextureController, 
                 private dataCreator: DrawDataCreator, private gl: WebGL2RenderingContext) {
         this.transformator = transformator;
         this.gl = gl;
         this.textureController = textureController;
         this.dataCreator = dataCreator;
+        this.tetrahedronData = dataCreator.tetrahedronData();
     }
     
-    setup() {
+    setup(drawer: Drawer) {
+        drawer.prepareVertices(this.tetrahedronData.attributeExtractor, this.tetrahedronData.vertices);
+        drawer.prepareIndices(this.tetrahedronData.indices);
         this.transformator.setdDefaultScaling();
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);

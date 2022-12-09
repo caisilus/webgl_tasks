@@ -1,86 +1,106 @@
-import {ShaderProgram} from "./shader_program";
-import {Shader} from "./shader";
-import {FloatBuffer} from "./buffer";
+import {DataChangeFrequency, dataChangeFrequencyToGLconst, 
+        FloatBuffer, InstanceAttributesBuffer} from "./buffer";
 import {IBufferable} from "./ibufferable"
 import {IAttributeExtractor} from "./attribute_extractor";
 import {DrawData, IndexDrawData} from "./draw_data";
 
 export class Drawer {
     private gl: WebGL2RenderingContext;
-    private program: ShaderProgram;
-    private vertexShader: Shader;
-    private fragmentShader: Shader;
-    private buffer: FloatBuffer;
-    private programBuilt: boolean = false;
-    private boxIndexBufferObject: WebGLBuffer | null;
-    
-    constructor(gl: WebGL2RenderingContext, vertexShaderText: string, fragmentShaderText: string) {
+    private program: WebGLProgram;
+    private vertexBuffer: FloatBuffer | null;
+    private instanceAttributesBuffer: InstanceAttributesBuffer | null;
+    private indexBufferObject: WebGLBuffer | null;
+
+    constructor(gl: WebGL2RenderingContext, program: WebGLProgram) {
         this.gl = gl;
-        this.program = new ShaderProgram(gl);
-        this.vertexShader = new Shader(gl, vertexShaderText, gl.VERTEX_SHADER);
-        this.fragmentShader = new Shader(gl, fragmentShaderText, gl.FRAGMENT_SHADER);
-        this.buffer = new FloatBuffer(gl);
-        
-        this.boxIndexBufferObject = this.gl.createBuffer();
+        this.program = program;
+        this.vertexBuffer = null;
+        this.instanceAttributesBuffer = null;
+        this.indexBufferObject = null;
     }
 
-    buildProgram(){
-        this.compileShaders();
-        this.program.attachShader(this.vertexShader);
-        this.program.attachShader(this.fragmentShader);
-        this.program.compileAndLink(true);
-        this.programBuilt = true;
-        this.gl.useProgram(this.program.program);
+    prepareVertices(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>, 
+                    dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
+        if (this.vertexBuffer == null) {
+            this.vertexBuffer = new FloatBuffer(this.gl);
+        }
+        this.vertexBuffer.putData(vertices, dataChangeFrequency);
+        this.bindAttributesToBuffer(this.vertexBuffer, attributeExtractor);
     }
 
-    compileShaders() {
-        this.vertexShader.compile();
-        this.fragmentShader.compile();
+    private bindAttributesToBuffer(buffer: FloatBuffer, attributeExtractor: IAttributeExtractor) {
+        let attributes = attributeExtractor.attributes(this.gl);
+        for (let i = 0; i < attributes.length; i++) {
+            buffer.bindAttribute(attributes[i], this.program);
+        }
+    }
+    
+    prepareInstanceAttributes(attributeExtractor: IAttributeExtractor, attributeValues: Array<IBufferable>, 
+        dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
+        if (this.instanceAttributesBuffer == null) {
+            this.instanceAttributesBuffer = new InstanceAttributesBuffer(this.gl);
+        }
+        this.instanceAttributesBuffer.putData(attributeValues, dataChangeFrequency);
+        this.bindAttributesToBuffer(this.instanceAttributesBuffer, attributeExtractor);
+    }
+
+    prepareIndices(indices: Array<number>, 
+                   dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
+        if (this.indexBufferObject == null){
+            this.indexBufferObject = this.gl.createBuffer();
+        }
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBufferObject);
+        const drawFreq = dataChangeFrequencyToGLconst(this.gl, dataChangeFrequency);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), drawFreq);
     }
 
     draw(drawData: DrawData) {
-        if (!this.programBuilt) {
-            throw new Error("Program not built");
-        }
         this.clearBg();
-        this.prepareData(drawData.attributeExtractor, drawData.vertices);
         this.gl.drawArrays(
-                                drawData.drawMethod, // draw method 
-                                0,          // how many to skip 
-                                drawData.pointsCount // how many to take
+                            drawData.drawMethod, // draw method 
+                            0,          // how many to skip 
+                            drawData.pointsCount // how many to take
                           );
     }
 
     drawIndex(drawData: IndexDrawData) {
-        if (!this.programBuilt) {
-            throw new Error("Program not built");
-        }
         this.clearBg();
-        this.prepareData(drawData.attributeExtractor, drawData.vertices);
 
-        if (this.boxIndexBufferObject == null) {
+        if (this.indexBufferObject == null) {
             throw new Error("Index buffer not initialized");
         }
-        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.boxIndexBufferObject);
-        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(drawData.indices), this.gl.STATIC_DRAW);
         this.gl.drawElements(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_INT, 0);
     
     }
 
-    private prepareData(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>) {
-        this.buffer.putData(vertices);
-        this.bindAttributesToBuffer(attributeExtractor);
-    }
-
-    private bindAttributesToBuffer(attributeExtractor: IAttributeExtractor) {
-        let attributes = attributeExtractor.attributes(this.gl);
-        for (let i = 0; i < attributes.length; i++) {
-            this.buffer.bindAttribute(attributes[i], this.program.program);
+    drawInstances(drawData: DrawData, numberOfInstances: number) {
+        this.clearBg();
+        
+        if (this.vertexBuffer == null || this.instanceAttributesBuffer == null){
+            throw new Error("Vertex or instance buffer is not initialized");
         }
+
+        this.gl.drawArraysInstanced(
+                                    drawData.drawMethod, 
+                                    0, 
+                                    drawData.pointsCount, 
+                                    numberOfInstances
+                                   );
     }
 
-    getGLProgram(): WebGLProgram {
-        return this.program.program; 
+    drawIndexInstances(drawData: IndexDrawData, numberOfInstances: number) {
+        this.clearBg();
+        
+        if (this.vertexBuffer == null || this.instanceAttributesBuffer == null){
+            throw new Error("Vertex or instance buffer is not initialized");
+        }
+
+        if (this.indexBufferObject == null) {
+            throw new Error("Index buffer not initialized");
+        }
+
+        this.gl.drawElementsInstanced(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_INT, 0, 
+                                      numberOfInstances);
     }
 
     clearBg(color: [number, number, number] = [0,0, 0]) {

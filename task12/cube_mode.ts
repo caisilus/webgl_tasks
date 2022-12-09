@@ -2,17 +2,24 @@ import {Transformator} from '../src/transformator';
 import {TextureController} from './texture_controller';
 import {DrawDataCreator} from "./data_creator";
 import {Drawer} from "../src/drawer";
+import {DataChangeFrequency} from "../src/buffer";
+import {IndexDrawData} from '../src/draw_data';
 
 export class CubeMode {
+    cubeData: IndexDrawData;
+
     constructor(private transformator: Transformator, private textureController: TextureController, 
                 private dataCreator: DrawDataCreator, private gl: WebGL2RenderingContext) {
         this.transformator = transformator;
         this.gl = gl;
         this.textureController = textureController;
         this.dataCreator = dataCreator;
+        this.cubeData = dataCreator.cubeData();
     }
     
-    setup() {
+    setup(drawer: Drawer) {
+        drawer.prepareVertices(this.cubeData.attributeExtractor, this.cubeData.vertices);
+        drawer.prepareIndices(this.cubeData.indices);
         this.transformator.setdDefaultScaling();
         this.transformator.setDefaultTranslation();
         this.gl.enable(this.gl.DEPTH_TEST);
@@ -24,8 +31,7 @@ export class CubeMode {
         performance.now() / 2 / 1000.0 * 60,
         performance.now() / 5 / 1000.0 * 60]);
         this.textureController.bind_textures();
-        let drawData = this.dataCreator.cubeData();
-        drawer.drawIndex(drawData);
+        drawer.drawIndex(this.cubeData);
     }
 
     onKeyUp(event: KeyboardEvent) {

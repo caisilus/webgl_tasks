@@ -1,7 +1,7 @@
 import { glMatrix,vec3, mat3, mat4 } from "gl-matrix";
 
 export class Camera{
-    private cameraPosition: Float32Array = new Float32Array([0, 0, -100]);
+    private cameraPosition: Float32Array = new Float32Array([0, 0, -50]);
     private cameraTarget: Float32Array = new Float32Array([0, 0, 0]);
     private cameraUp: Float32Array = new Float32Array([0, 1, 0]);
 

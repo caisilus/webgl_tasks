@@ -1,6 +1,26 @@
 import {IBufferable} from "./ibufferable";
 import {IAttribute} from "./attribute";
-import {ShaderProgram} from "./shader_program";
+
+export enum DataChangeFrequency {
+    STATIC,
+    DYNAMIC,
+    STREAM
+};
+
+export function dataChangeFrequencyToGLconst(gl: WebGLRenderingContext, 
+                                             dataChangeFrequency: DataChangeFrequency): number {
+    switch (dataChangeFrequency) {
+        case DataChangeFrequency.STATIC: {
+            return gl.STATIC_DRAW;
+        }
+        case DataChangeFrequency.DYNAMIC: {
+            return gl.DYNAMIC_DRAW;
+        }
+        case DataChangeFrequency.STREAM: {
+            return gl.STATIC_DRAW;
+        }
+    }
+}
 
 export class FloatBuffer {
     gl: WebGL2RenderingContext
@@ -16,10 +36,11 @@ export class FloatBuffer {
         this.glBuffer = glBuffer;
     }
 
-    putData(data: Array<IBufferable>) {
+    putData(data: Array<IBufferable>, drawFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
         let plainData = this.getPlainData(data);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.glBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, plainData, this.gl.STATIC_DRAW);
+        const freq = dataChangeFrequencyToGLconst(this.gl, drawFrequency);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, plainData, freq);
     }
 
     private getPlainData(bufferableData: Array<IBufferable>) {
@@ -37,9 +58,9 @@ export class FloatBuffer {
     }
 
     bindAttribute(attribute: IAttribute, program: WebGLProgram) {
-        var positionAttributeLocation = this.gl.getAttribLocation(program, attribute.name);
+        let attributeLocation = this.gl.getAttribLocation(program, attribute.name);
          
-        this.gl.vertexAttribPointer(positionAttributeLocation, // attr location
+        this.gl.vertexAttribPointer(attributeLocation, // attr location
                                     attribute.valuesCount, // number of elements per attribute
                                     attribute.glType, // type of elements
                                     attribute.dataNormalized, // is data normalized
@@ -48,6 +69,16 @@ export class FloatBuffer {
                                                               //        to this attr
                                    );
 
-        this.gl.enableVertexAttribArray(positionAttributeLocation);
+        this.gl.enableVertexAttribArray(attributeLocation);
+
+        return attributeLocation;
+    }
+}
+
+export class InstanceAttributesBuffer extends FloatBuffer {
+    bindAttribute(attribute: IAttribute, program: WebGLProgram) {
+        let attributeLocation = super.bindAttribute(attribute, program);
+        this.gl.vertexAttribDivisor(attributeLocation, 1);
+        return attributeLocation;
     }
 }

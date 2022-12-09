@@ -111,8 +111,6 @@ export class Loader{
       }
       let drawMethod = this.gl.TRIANGLES;
       let countPoints = vertices.length;
-      console.log(vertices);
-      console.log(indices);
       return {
         "indices": indices,
         "vertices": vertices,

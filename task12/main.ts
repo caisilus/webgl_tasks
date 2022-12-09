@@ -1,6 +1,7 @@
 import fragmentShader from "./shaders/shader.frag";
 import vertexShader from "./shaders/shader3d.vert";
 
+import {ProgramBuilder} from "../src/program_builder";
 import {Drawer} from "../src/drawer";
 import {TextureController} from "./texture_controller";
 import {DrawDataCreator} from "./data_creator";
@@ -14,6 +15,7 @@ import {TetrahedronMode} from "./tetrahedron_mode";
 class Main {
     gl: WebGL2RenderingContext;
     select: HTMLSelectElement;
+    program: WebGLProgram;
     drawer: Drawer;
     transformator: Transformator;
     camera: Camera;
@@ -27,12 +29,12 @@ class Main {
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas)
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
-        this.drawer = new Drawer(this.gl, vertexShader, fragmentShader);
-        this.drawer.buildProgram();
-        
-        this.transformator = new Transformator(this.gl, this.drawer.getGLProgram());
-        this.camera = new Camera(this.gl, this.drawer.getGLProgram());
-        this.textureController = new TextureController(this.gl, this.drawer.getGLProgram());
+        const programBuilder = new ProgramBuilder(this.gl);
+        this.program = programBuilder.buildProgram(vertexShader, fragmentShader);
+        this.drawer = new Drawer(this.gl, this.program);
+        this.transformator = new Transformator(this.gl, this.program);
+        this.camera = new Camera(this.gl, this.program);
+        this.textureController = new TextureController(this.gl, this.program);
         this.textureController.load_textures();
         this.dataCreator = new DrawDataCreator(this.gl);
         this.circleMode = new CircleMode(this.transformator, this.textureController, 
@@ -43,6 +45,9 @@ class Main {
                                          this.dataCreator, this.gl);
 
         this.controlMode = this.circleMode;
+        console.log("before setup");
+        this.controlMode.setup(this.drawer);
+        console.log("after setup");
         this.select.addEventListener('change', (e) => { this.onSelectChange(e); });
         document.addEventListener('keyup', (e) => {this.onKeyUp(e)}, false);
         this.configure_loop();
@@ -72,6 +77,7 @@ class Main {
     }
 
     onSelectChange(event: Event) {
+        console.log("onSelectChange");
         const figureName = this.selectedFigureName();
         switch (figureName) {
             case "Градиентный круг": {
@@ -90,7 +96,7 @@ class Main {
                 throw new Error(`Unknown figure name ${figureName}`);
             }
         }
-        this.controlMode.setup();
+        this.controlMode.setup(this.drawer);
     }
 
     onKeyUp(event: KeyboardEvent) {
