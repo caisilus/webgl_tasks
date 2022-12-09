@@ -1,5 +1,5 @@
 import {Texture} from "../src/texture";
-import Cat from '../src/images/Cat.jpg';
+import Cat from '../src/images/spam_BaseColor.1001.jpg';
 import Goodman from '../src/images/goodman.png';
 import Seal from '../src/images/seal.png';
 

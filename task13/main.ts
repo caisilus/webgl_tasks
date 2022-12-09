@@ -15,6 +15,8 @@ import Saved from "../static/objects/saved.obj";
 import Turky from "../static/objects/Cooked_Turkey.obj";
 import Piramid from "../static/objects/pyramids.obj";
 import Cat from "../static/objects/Cat.obj";
+import SPAN from "../static/objects/spam.obj";
+
 
 class Main {
     gl: WebGL2RenderingContext;
@@ -38,7 +40,7 @@ class Main {
         this.textureController.load_textures();
         this.dataCreator = new DrawDataCreator(this.gl);
         this.loader = new Loader(this.gl);
-        fetch(Cat)
+        fetch(SPAN)
         .then(response => response.text())
         .then(text => this.data = this.loader.objtoDrawData(text));
 
@@ -46,7 +48,6 @@ class Main {
         this.transformator.setDefaultTranslation();
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
-        //this.textureController.disable_textures();
         this.configure_loop();
     }
 
