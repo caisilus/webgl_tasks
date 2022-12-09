@@ -62,8 +62,8 @@ export class Drawer {
             throw new Error("Index buffer not initialized");
         }
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.boxIndexBufferObject);
-        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(drawData.indices), this.gl.STATIC_DRAW);
-        this.gl.drawElements(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_SHORT, 0);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(drawData.indices), this.gl.STATIC_DRAW);
+        this.gl.drawElements(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_INT, 0);
     
     }
 

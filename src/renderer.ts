@@ -1,7 +1,7 @@
-import { glMatrix, mat4 } from "gl-matrix";
-import {DrawData} from "./draw_data";
+import { glMatrix, mat3, mat4 } from "gl-matrix";
+import {DrawData} from "../src/draw_data";
 
-export class Renderer3D{
+export class Transformator{
     private cameraPosition: Float32Array = new Float32Array([0, 0, -5]);
     private cameraTarget: Float32Array = new Float32Array([0, 0, 0]);
     private cameraUp: Float32Array = new Float32Array([0, 1, 0]);
@@ -96,7 +96,12 @@ export class Renderer3D{
         this.buildWorldMatrix();
     }
 
-    set_default_position(){
+    setdDefaultScaling(){
+        mat4.identity(this.scalingMatrix);
+        this.buildWorldMatrix();
+    }
+
+    setDefaultTranslation() {
         mat4.identity(this.translationMatrix);
         this.buildWorldMatrix();
     }

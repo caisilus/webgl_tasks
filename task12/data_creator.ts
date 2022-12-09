@@ -5,20 +5,6 @@ export class DrawDataCreator {
     constructor(readonly gl: WebGL2RenderingContext) {
         this.gl = gl;
     }
-    
-    drawDataFromFigureName(figureName: string): DrawData {
-        switch (figureName) {
-            case "Градиентный круг": {
-                return this.circleData();
-            }
-            case "Текстурирование куба": {
-                return this.cubeData();
-            }
-            default: {
-                throw new Error(`Unknown figure name ${figureName}`);
-            }
-        }
-    }
 
     public tetrahedronData(): IndexDrawData{
         let vertices = [
