@@ -28,5 +28,5 @@ export class Offset implements IBufferable {
 }
 
 export function instanceAttributes(): Array<IBufferable> {
-    return [new Offset(0,0,0), new Offset(30.0,0,0), new Offset(-30.0,0,0)];
+    return [new Offset(0,0,0), new Offset(50.0,0,0), new Offset(-50.0,0,0)];
 }

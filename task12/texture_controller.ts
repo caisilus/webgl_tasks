@@ -1,12 +1,12 @@
 import {Texture} from "../src/texture";
-import Cat from '../src/images/spam_BaseColor.1001.jpg';
+import Cat from '../src/images/cat.png';
 import Goodman from '../src/images/goodman.png';
 import Seal from '../src/images/seal.png';
 
 export class TextureController{
     private texturesMixLocation: WebGLUniformLocation | null;
     private colorMixLocation: WebGLUniformLocation | null;
-    private texture1: Texture;
+    public texture1: Texture;
     private texture2: Texture;
 
     public textures_mix: number;
@@ -72,17 +72,17 @@ export class TextureController{
         this.gl.uniform1f(this.colorMixLocation, this.color_mix);
     }
 
-    load_textures(){
+    load_textures(url: string = Goodman, url2: string = Cat){
         let img1 = new Image();
         img1.crossOrigin = 'anonymous'
-        img1.src = Goodman;
+        img1.src = url;
         img1.onload =() => {
             return this.texture1.loadImage(img1);
         };
 
         let img2 = new Image();
         img2.crossOrigin = 'anonymous'
-        img2.src = Cat;
+        img2.src = url2;
         img2.onload =() => {
             return this.texture2.loadImage(img2);
         };

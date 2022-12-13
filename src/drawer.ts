@@ -11,12 +11,24 @@ export class Drawer {
     private instanceAttributesBuffer: InstanceAttributesBuffer | null;
     private indexBufferObject: WebGLBuffer | null;
 
+    private vao: WebGLVertexArrayObject | null;
+
     constructor(gl: WebGL2RenderingContext, program: WebGLProgram) {
         this.gl = gl;
         this.program = program;
         this.vertexBuffer = null;
         this.instanceAttributesBuffer = null;
         this.indexBufferObject = null;
+
+        this.vao = this.gl.createVertexArray();
+    }
+
+    enableVAO() {
+        this.gl.bindVertexArray(this.vao);
+    }
+
+    disableVAO() {
+        this.gl.bindVertexArray(null);
     }
 
     prepareVertices(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>, 
@@ -89,8 +101,7 @@ export class Drawer {
     }
 
     drawIndexInstances(drawData: IndexDrawData, numberOfInstances: number) {
-        this.clearBg();
-        
+        this.enableVAO();
         if (this.vertexBuffer == null || this.instanceAttributesBuffer == null){
             throw new Error("Vertex or instance buffer is not initialized");
         }
@@ -101,6 +112,7 @@ export class Drawer {
 
         this.gl.drawElementsInstanced(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_INT, 0, 
                                       numberOfInstances);
+        this.disableVAO();
     }
 
     clearBg(color: [number, number, number] = [0,0, 0]) {

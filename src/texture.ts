@@ -35,6 +35,6 @@ export class Texture{
     bind(){
         this.gl.activeTexture(this.gl.TEXTURE0 + this.texnimber);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-        this.gl.uniform1i(this.imageLocation, this.texnimber);
+        this.gl.uniform1i(this.imageLocation, this.gl.TEXTURE0 + this.texnimber);
     }
 }

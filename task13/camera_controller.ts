@@ -4,7 +4,7 @@ import {vec2} from "gl-matrix";
 export class CameraController{
     camera: Camera;
     canvas: HTMLCanvasElement;
-    cameraMoveSpeed: number = 0.1;
+    cameraMoveSpeed: number = 1;
     cameraRotationSpeed: number = 0.1;
 
     drag: boolean = false;
@@ -16,9 +16,8 @@ export class CameraController{
 
     constructor(readonly gl: WebGL2RenderingContext, readonly programm: WebGLProgram)
     {
-        this.canvas = gl.canvas
+        this.canvas = gl.canvas as HTMLCanvasElement;
         this.camera = new Camera(gl, programm);
-        this
         
 
         document.addEventListener("mousedown", (e) => { this.mouse_button_down(e); }, false);
