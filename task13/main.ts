@@ -3,27 +3,19 @@ import vertexShader from "./shaders/test_shader.vert";
 
 import {Drawer} from "../src/drawer";
 import {TextureController} from "../src/texture_contoller";
-import {DrawDataCreator} from "../task12/data_creator";
 import {Transformator} from "../src/transformator";
 import { CameraController } from "./camera_controller";
 import { Loader } from "./obj_loader";
-import {DrawData, IndexDrawData} from "../src/draw_data";
-import {Vertex3DWithColor} from "../src/vertex3d";
-import {instanceAttributes, Offset} from "./instance_attributes";
+import { IndexDrawData } from "../src/draw_data";
 import { ProgramBuilder } from "../src/program_builder";
 
-import Cattle from "../static/objects/cattle.obj";
-import Saved from "../static/objects/saved.obj";
-import Turky from "../static/objects/Cooked_Turkey.obj";
-import Piramid from "../static/objects/pyramids.obj";
 import Cat from "../static/objects/Cat.obj";
 import Span from "../static/objects/spam.obj";
 
 import CatTex from '../src/images/Cat.jpg';
-import Goodman from '../src/images/goodman.png';
-import Seal from '../src/images/seal.png';
 import Spam from '../src/images/spam_BaseColor.jpg';
 import { Texture } from "../src/texture";
+import { PlanetAttribute } from "./instance_attributes";
 
 
 class Main {
@@ -35,12 +27,14 @@ class Main {
     textureController: TextureController;
     loader: Loader;
 
-    textures: {[key:number]: Texture} ={};
-    data: {[key:number]: IndexDrawData} ={}; 
+    textures: {[key:number]: Texture} = {};
+    data: {[key:number]: IndexDrawData} = {}; 
+    instanceAttributes: PlanetAttribute[][]; 
     num_drawers: number;
 
-    num_instances: number[] = [1 , 3];
-    objects_radius: number[] = [5, ];
+    num_instances: number[] = [1 , 2];
+    
+    angleUniform: WebGLUniformLocation | null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas);
@@ -63,15 +57,19 @@ class Main {
 
         this.loader = new Loader(this.gl);
         
-
         this.loadModel(Span, 1);
         this.loadModel(Cat, 0);
+
+        this.instanceAttributes = [[new PlanetAttribute(0.0, 0.0, 0.0)], 
+                                   [new PlanetAttribute(40.0, 1.0, 1.0), 
+                                    new PlanetAttribute(60.0, 2.0, 0.2)]]
 
         this.transformator.setdDefaultScaling();
         this.transformator.setDefaultTranslation();
         this.transformator.rotate([0, 0, 90]);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
+        this.angleUniform = this.gl.getUniformLocation(this.program, "angle");
         this.configure_loop();
     }
 
@@ -99,8 +97,8 @@ class Main {
         this.drawers[ind].enableVAO();
         this.drawers[ind].prepareVertices(indexData.attributeExtractor, indexData.vertices);
         this.drawers[ind].prepareIndices(indexData.indices);
-        let offsets = this.createOffsets(this.num_instances[ind], 30);
-        this.drawers[ind].prepareInstanceAttributes(Offset, offsets);
+        let planetAttributes = this.instanceAttributes[ind];
+        this.drawers[ind].prepareInstanceAttributes(PlanetAttribute, planetAttributes);
         this.drawers[ind].disableVAO();
     }
 
@@ -122,14 +120,6 @@ class Main {
         requestAnimationFrame(() => {this.update()});
     }
 
-    createOffsets(num: number, dist_between: number){
-        let offsets: Offset[] = [];
-        for (let i = 0; i < num; i++){
-            offsets.push(new Offset( -(num / 2) *dist_between + i  * dist_between, 0.0, 0.0));
-        }
-        return offsets;
-    }
-
     update() {
         this.drawers[0].clearBg();
         
@@ -142,6 +132,9 @@ class Main {
                 performance.now() / 2 / 1000.0 * 60 * i,
                 0 + performance.now() / 5 / 1000.0 * 60]);
 
+                if (this.angleUniform != null) {
+                    this.gl.uniform1f(this.angleUniform, performance.now() / 1000.0);
+                }
                 this.drawers[i].drawIndexInstances(this.data[i], this.num_instances[i]);
             }
         }

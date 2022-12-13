@@ -1,14 +1,15 @@
 import {IAttribute} from "../src/attribute";
 import {IBufferable} from "../src/ibufferable";
 
-export class Offset implements IBufferable {
-    offsetVector: [number, number, number]
-    constructor(offsetX: number, offsetY: number, offsetZ: number) {
-        this.offsetVector = [offsetX, offsetY, offsetZ];
+export class PlanetAttribute implements IBufferable {
+    constructor(private radius: number, private statringAngle: number, private angleSpeed: number) {
+        this.radius = radius;
+        this.statringAngle = statringAngle;
+        this.angleSpeed = angleSpeed;
     }
     
     toFloatArray(): Float32Array {
-        return new Float32Array(this.offsetVector);
+        return new Float32Array([this.radius, this.statringAngle, this.angleSpeed]);
     }
 
     dataLength(): number {
@@ -17,16 +18,34 @@ export class Offset implements IBufferable {
 
     static attributes(gl: WebGLRenderingContext): Array<IAttribute> {
         return [{
-                    name: "instanceOffset",
-                    valuesCount: 3,
+                    name: "radius",
+                    valuesCount: 1,
                     glType: gl.FLOAT,
                     dataNormalized: false,
                     parentByteSize: 3 * Float32Array.BYTES_PER_ELEMENT,
                     offsetInParent: 0
-        }];
+                },
+                {
+                    name: "startingAngle",
+                    valuesCount: 1,
+                    glType: gl.FLOAT,
+                    dataNormalized: false,
+                    parentByteSize: 3 * Float32Array.BYTES_PER_ELEMENT,
+                    offsetInParent: Float32Array.BYTES_PER_ELEMENT
+                },
+                {
+                    name: "angularSpeed",
+                    valuesCount: 1,
+                    glType: gl.FLOAT,
+                    dataNormalized: false,
+                    parentByteSize: 3 * Float32Array.BYTES_PER_ELEMENT,
+                    offsetInParent: 2 * Float32Array.BYTES_PER_ELEMENT
+                }];
     }
 }
 
 export function instanceAttributes(): Array<IBufferable> {
-    return [new Offset(0,0,0), new Offset(50.0,0,0), new Offset(-50.0,0,0)];
+    return [new PlanetAttribute(0.0, 0.0, 0.0), 
+            new PlanetAttribute(1.4, 1.0, 1.5), 
+            new PlanetAttribute(4.0, 2.0, 0.1)];
 }
