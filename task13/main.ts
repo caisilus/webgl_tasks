@@ -11,9 +11,11 @@ import { ProgramBuilder } from "../src/program_builder";
 
 import Cat from "../static/objects/Cat.obj";
 import Span from "../static/objects/spam.obj";
+import CoockedTurkey from "../static/objects/Cooked_Turkey.obj";
 
 import CatTex from '../src/images/Cat.jpg';
 import Spam from '../src/images/spam_BaseColor.jpg';
+import CoockedTexture from "../src/images/Cooked_Turkey.jpg";
 import { Texture } from "../src/texture";
 import { PlanetAttribute } from "./instance_attributes";
 
@@ -51,14 +53,14 @@ class Main {
         this.textureController = new TextureController(this.gl, this.program);
         this.textureController.load_textures();
 
-        let textures_url = [CatTex, Spam];
+        let textures_url = [CoockedTexture, Spam];
 
         this.load_textures(textures_url);
 
         this.loader = new Loader(this.gl);
         
         this.loadModel(Span, 1);
-        this.loadModel(Cat, 0);
+        this.loadModel(CoockedTurkey, 0);
 
         this.instanceAttributes = [[new PlanetAttribute(0.0, 0.0, 0.0)], 
                                    [new PlanetAttribute(40.0, 1.0, 1.0), 
