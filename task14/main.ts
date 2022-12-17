@@ -26,10 +26,10 @@ class Main {
     drawers: Drawer[] = [];
     transformator: Transformator;
     cameraController: CameraController;
-    //textureController: TextureController;
+    textureController: TextureController;
     loader: Loader;
 
-    //textures: {[key:number]: Texture} = {};
+    textures: {[key:number]: Texture} = {};
     data: {[key:number]: IndexDrawData} = {}; 
     instanceAttributes: PlanetAttribute[][]; 
     num_drawers: number;
@@ -50,12 +50,12 @@ class Main {
         
         this.transformator = new Transformator(this.gl, this.program);
         this.cameraController = new CameraController(this.gl, this.program);
-        /* this.textureController = new TextureController(this.gl, this.program);
+        this.textureController = new TextureController(this.gl, this.program);
         this.textureController.load_textures();
 
-        let textures_url = [Spam];
+        let textures_url = [CatTex];
 
-        this.load_textures(textures_url); */
+        this.load_textures(textures_url);
 
         this.loader = new Loader(this.gl);
         
@@ -124,8 +124,8 @@ class Main {
         
         if (Object.keys(this.data).length == this.num_drawers){
             for (let i = 0; i < this.num_drawers; i++){
-                // this.textureController.texture1 = this.textures[i];
-                // this.textureController.bind_textures();
+                this.textureController.texture1 = this.textures[i];
+                this.textureController.bind_textures();
 
                 this.transformator.rotate([-90 + performance.now() / 1000.0 * 0,
                 performance.now() / 2 / 1000.0 * 60 * i,
