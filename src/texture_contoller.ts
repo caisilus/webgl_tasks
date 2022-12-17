@@ -16,6 +16,8 @@ export class TextureController{
         this.programm = programm;
         this.texturesMixLocation = this.gl.getUniformLocation(programm, "texturesMix");
         this.colorMixLocation = this.gl.getUniformLocation(programm, "colorMix");
+        console.log(this.texturesMixLocation)
+        console.log(this.colorMixLocation)
         this.texture1 = new Texture(this.gl, this.programm, "u_texture1", 0);
         this.texture2 = new Texture(this.gl, this.programm, "u_texture2", 1);
         this.color_mix = 0.0;

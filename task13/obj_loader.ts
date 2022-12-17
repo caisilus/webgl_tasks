@@ -1,4 +1,3 @@
-import {DrawData, IndexDrawData} from "../src/draw_data";
 import {Vertex3DWithColor} from "../src/vertex3d";
 
 export class Loader{
@@ -94,7 +93,6 @@ export class Loader{
       let data = this.parse_obj_text(obj);
 
       let vertices: Vertex3DWithColor[] = [];
-      let boxIndices: number[] = [];
       let indices: number[] = [];
       
       for (let i = 0; i < data[0].length; i++) {
@@ -102,11 +100,13 @@ export class Loader{
           data[1][i] = [0, 0];
         }
         vertices.push(new Vertex3DWithColor(
-          data[0][i][0],
-          data[0][i][1],
-          data[0][i][2],
-          [255, 255, 255],
-          [data[1][i][0], 1-data[1][i][1]]));
+          data[0][i][0], //x
+          data[0][i][1], //y
+          data[0][i][2], //z
+          [255, 255, 255], //color
+          [data[1][i][0], 1-data[1][i][1]],//texcoord
+          [data[2][i][0],data[2][i][1],data[2][i][2],] //normal
+        ));
         indices.push(i);
       }
       let drawMethod = this.gl.TRIANGLES;

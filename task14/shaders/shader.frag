@@ -14,6 +14,8 @@ uniform float colorMix;
         
 void main()
 {
+    //fragColor = vec4(fragNormal,1.0);
+
     vec4 tex_col1 = texture(u_texture1, fragTexCoord);
     vec4 tex_col2 = texture(u_texture2, fragTexCoord);
     fragColor =  mix(mix(tex_col1, tex_col2, texturesMix), vec4(color, 1.0), colorMix);

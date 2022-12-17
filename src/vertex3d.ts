@@ -40,14 +40,19 @@ export class Vertex3DWithColor implements IBufferable {
     z: number;
     color: [number, number, number];
     texCord: [number, number];
+    normal: [number, number, number];
     
-    constructor(x: number, y: number, z: number = 0.0, color: [number, number, number] = [0, 255, 0], texcord: [number, number] = [0.0, 0.0]) {
+    constructor(x: number, y: number, z: number = 0.0,
+         color: [number, number, number] = [0, 255, 0],
+         texcord: [number, number] = [0.0, 0.0],
+         normal: [number, number, number] = [0.0, 0.0, 0.0]) {
         this.x = x;
         this.y = y;
         this.z = z;
 
         this.color = color;
         this.texCord = texcord;
+        this.normal = normal;
         
     }
 
@@ -55,11 +60,14 @@ export class Vertex3DWithColor implements IBufferable {
         let normalizedRed = this.color[0] / 255.0; 
         let normalizedGreen = this.color[1] / 255.0;
         let normalizedBlue = this.color[2] / 255.0;
-        return new Float32Array([this.x, this.y, this.z, normalizedRed, normalizedGreen, normalizedBlue, this.texCord[0], this.texCord[1]]);
+        return new Float32Array([this.x, this.y, this.z,
+            normalizedRed, normalizedGreen, normalizedBlue,
+            this.texCord[0], this.texCord[1],
+            this.normal[0], this.normal[1], this.normal[2]]);
     }
 
     dataLength(): number {
-        return 8;
+        return 12;
     }
 
     static attributes(gl: WebGLRenderingContext): Array<IAttribute> {
@@ -68,7 +76,7 @@ export class Vertex3DWithColor implements IBufferable {
                             valuesCount: 3,
                             glType: gl.FLOAT,
                             dataNormalized: false,
-                            parentByteSize: 8 * Float32Array.BYTES_PER_ELEMENT,
+                            parentByteSize: 12 * Float32Array.BYTES_PER_ELEMENT,
                             offsetInParent: 0
                         };
     
@@ -77,7 +85,7 @@ export class Vertex3DWithColor implements IBufferable {
                         valuesCount: 3,
                         glType: gl.FLOAT,
                         dataNormalized: false,
-                        parentByteSize: 8 * Float32Array.BYTES_PER_ELEMENT,
+                        parentByteSize: 12 * Float32Array.BYTES_PER_ELEMENT,
                         offsetInParent: 3 * Float32Array.BYTES_PER_ELEMENT
                     }
         let texcord = {
@@ -85,10 +93,19 @@ export class Vertex3DWithColor implements IBufferable {
                         valuesCount: 2,
                         glType: gl.FLOAT,
                         dataNormalized: false,
-                        parentByteSize: 8 * Float32Array.BYTES_PER_ELEMENT,
+                        parentByteSize: 12 * Float32Array.BYTES_PER_ELEMENT,
                         offsetInParent: 6 * Float32Array.BYTES_PER_ELEMENT
         }
 
-        return [coodinate, color, texcord];
+        let normal = {
+                        name: "vertNormal",
+                        valuesCount: 3,
+                        glType: gl.FLOAT,
+                        dataNormalized: true,
+                        parentByteSize: 12 * Float32Array.BYTES_PER_ELEMENT,
+                        offsetInParent: 8 * Float32Array.BYTES_PER_ELEMENT
+        }
+
+        return [coodinate, color, texcord, normal];
     }
 }
