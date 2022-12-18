@@ -5,13 +5,11 @@ import {IAttributeExtractor} from "./attribute_extractor";
 import {DrawData, IndexDrawData} from "./draw_data";
 
 export class Drawer {
-    private gl: WebGL2RenderingContext;
-    private program: WebGLProgram;
+    readonly gl: WebGL2RenderingContext;
+    readonly program: WebGLProgram;
     private vertexBuffer: FloatBuffer | null;
     private instanceAttributesBuffer: InstanceAttributesBuffer | null;
     private indexBufferObject: WebGLBuffer | null;
-
-    private vao: WebGLVertexArrayObject | null;
 
     constructor(gl: WebGL2RenderingContext, program: WebGLProgram) {
         this.gl = gl;
@@ -19,12 +17,10 @@ export class Drawer {
         this.vertexBuffer = null;
         this.instanceAttributesBuffer = null;
         this.indexBufferObject = null;
-
-        this.vao = this.gl.createVertexArray();
     }
 
-    enableVAO() {
-        this.gl.bindVertexArray(this.vao);
+    enableVAO(vao: WebGLVertexArrayObject) {
+        this.gl.bindVertexArray(vao);
     }
 
     disableVAO() {
@@ -33,9 +29,7 @@ export class Drawer {
 
     prepareVertices(attributeExtractor: IAttributeExtractor, vertices: Array<IBufferable>, 
                     dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
-        if (this.vertexBuffer == null) {
-            this.vertexBuffer = new FloatBuffer(this.gl);
-        }
+        this.vertexBuffer = new FloatBuffer(this.gl);
         this.vertexBuffer.putData(vertices, dataChangeFrequency);
         this.bindAttributesToBuffer(this.vertexBuffer, attributeExtractor);
     }
@@ -48,19 +42,15 @@ export class Drawer {
     }
     
     prepareInstanceAttributes(attributeExtractor: IAttributeExtractor, attributeValues: Array<IBufferable>, 
-        dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
-        if (this.instanceAttributesBuffer == null) {
-            this.instanceAttributesBuffer = new InstanceAttributesBuffer(this.gl);
-        }
+                              dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
+        this.instanceAttributesBuffer = new InstanceAttributesBuffer(this.gl);
         this.instanceAttributesBuffer.putData(attributeValues, dataChangeFrequency);
         this.bindAttributesToBuffer(this.instanceAttributesBuffer, attributeExtractor);
     }
 
     prepareIndices(indices: Array<number>, 
                    dataChangeFrequency: DataChangeFrequency = DataChangeFrequency.STATIC) {
-        if (this.indexBufferObject == null){
-            this.indexBufferObject = this.gl.createBuffer();
-        }
+        this.indexBufferObject = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBufferObject);
         const drawFreq = dataChangeFrequencyToGLconst(this.gl, dataChangeFrequency);
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), drawFreq);
@@ -101,7 +91,6 @@ export class Drawer {
     }
 
     drawIndexInstances(drawData: IndexDrawData, numberOfInstances: number) {
-        this.enableVAO();
         if (this.vertexBuffer == null || this.instanceAttributesBuffer == null){
             throw new Error("Vertex or instance buffer is not initialized");
         }
@@ -112,7 +101,6 @@ export class Drawer {
 
         this.gl.drawElementsInstanced(drawData.drawMethod, drawData.indices.length, this.gl.UNSIGNED_INT, 0, 
                                       numberOfInstances);
-        this.disableVAO();
     }
 
     clearBg(color: [number, number, number] = [0,0, 0]) {

@@ -1,4 +1,4 @@
-import {Vertex3DWithColor} from "../src/vertex3d";
+import {Vertex3DWithColor} from "./vertex3d";
 
 export class Loader{
     private gl: WebGL2RenderingContext;

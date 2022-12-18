@@ -2,10 +2,10 @@ import fragmentShader from "./shaders/shader.frag";
 import vertexShader from "./shaders/test_shader.vert";
 
 import {Drawer} from "../src/drawer";
-import {TextureController} from "../src/texture_contoller";
+import {TextureController} from "../src/texture_controller";
 import {Transformator} from "../src/transformator";
 import { CameraController } from "../task13/camera_controller";
-import { Loader } from "../task13/obj_loader";
+import { Loader } from "../src/obj_loader";
 import { IndexDrawData } from "../src/draw_data";
 import { ProgramBuilder } from "../src/program_builder";
 
