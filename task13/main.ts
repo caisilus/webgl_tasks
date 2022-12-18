@@ -86,20 +86,12 @@ class Main {
     update() {
         this.drawer.clearBg();
         
+        this.turkey.transformator.rotate([0, 0, performance.now() / 3 / 1000.0 * 60]);
+        
         this.turkey.draw();
 
-        this.turkey.transformator.rotate([-90 + performance.now() / 1000.0 * 0,
-                performance.now() / 2 / 1000.0 * 60,
-                0 + performance.now() / 5 / 1000.0 * 60]);
-
-        if (this.angleUniform != null) {
-            this.gl.uniform1f(this.angleUniform, performance.now() / 1000.0);
-        }
-
+        this.span.transformator.rotate([0, performance.now() / 2 / 1000.0 * 60, 0]);
         this.span.draw();
-        this.span.transformator.rotate([-90 + performance.now() / 1000.0 * 0,
-                performance.now() / 2 / 1000.0 * 60,
-                0 + performance.now() / 5 / 1000.0 * 60]);
 
         if (this.angleUniform != null) {
             this.gl.uniform1f(this.angleUniform, performance.now() / 1000.0);
