@@ -15,7 +15,10 @@ uniform float texturesMix;
 uniform float colorMix;
 uniform vec3 u_reverseLightDirection;
 uniform float u_shininess;
-uniform int f;
+uniform vec3 u_lightDirection;
+uniform float u_limit;  
+uniform float u_innerLimit; 
+uniform float u_outerLimit;
         
 void main()
 {
@@ -23,19 +26,18 @@ void main()
 
     vec4 tex_col1 = texture(u_texture1, fragTexCoord);
     vec4 tex_col2 = texture(u_texture2, fragTexCoord);
-    vec3 ratio = v_surfaceToLight;
-    if (f==0){
-        ratio = normalize(u_reverseLightDirection);
-    }
-    float light = dot(fragNormal, ratio);
     fragColor =  mix(mix(tex_col1, tex_col2, texturesMix), vec4(color, 1.0), colorMix);
+    
+    vec3 surfaceToLightDirection = v_surfaceToLight;
+    vec3 surfaceToViewDirection = v_surfaceToView;
+    vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
-    vec3 halfVector = normalize(v_surfaceToLight + v_surfaceToView);
-    float specular = 0.0;
-    if (light > 0.0) {
-    specular = pow(dot(fragNormal, halfVector), u_shininess);
-    }
+    float dotFromDirection = dot(surfaceToLightDirection,-u_lightDirection);
+    float limitRange = u_innerLimit - u_outerLimit;
+    float inLight = clamp((dotFromDirection - u_outerLimit) / limitRange, 0.0, 1.0);
+    float light = inLight *dot(fragNormal, surfaceToLightDirection);
+    float specular = inLight * pow(dot(fragNormal, halfVector), u_shininess);
+
     fragColor.rgb *=light;
     fragColor.rgb += specular;
-
 }
