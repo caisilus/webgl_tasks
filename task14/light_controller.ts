@@ -6,6 +6,11 @@ export class LightController{
     currentMode:string;
     gl:WebGL2RenderingContext;
     reverseLightDirectionLocation:WebGLUniformLocation | null;
+    lColor:WebGLUniformLocation | null;
+    lAmbient:WebGLUniformLocation | null;
+    lDuffuse:WebGLUniformLocation | null;
+    lSpecular:WebGLUniformLocation | null;
+    lAttenuation:WebGLUniformLocation | null;
     flag: WebGLUniformLocation|null;
 
     constructor(gl:WebGL2RenderingContext, readonly program: WebGLProgram,lm: string,ls:LightSource){
@@ -14,6 +19,16 @@ export class LightController{
         this.gl = gl;
         this.reverseLightDirectionLocation = this.gl.getUniformLocation(program,"u_reverseLightDirection");
         this.gl.uniform3fv(this.reverseLightDirectionLocation, this.lightSource.lightPosition);
+        this.lColor = this.gl.getUniformLocation(program,"lColor");
+        this.gl.uniform3fv(this.lColor, this.lightSource.lightColor);
+        this.lAmbient = this.gl.getUniformLocation(program,"lAmbient");
+        this.gl.uniform3fv(this.lAmbient, this.lightSource.lightAmbient);
+        this.lDuffuse = this.gl.getUniformLocation(program,"lDiffuse");
+        this.gl.uniform3fv(this.lDuffuse, this.lightSource.lightDiffuse);
+        this.lSpecular = this.gl.getUniformLocation(program,"lSpecular");
+        this.gl.uniform3fv(this.lSpecular, this.lightSource.lightSpecular);
+        this.lAttenuation = this.gl.getUniformLocation(program,"lAttenuation");
+        this.gl.uniform3fv(this.lAttenuation, this.lightSource.lightAttenuation);
         this.flag = this.gl.getUniformLocation(program, "f");
         this.switch_mode(lm);
     }

@@ -69,7 +69,8 @@ class Main {
         this.instanceAttributes = [[new PlanetAttribute(0.0, 0.0, 0.0)]]
 
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
-        this.lightController = new LightController(this.gl,this.program, "directional", new LightSource(new Float32Array([0, 50, 0]),[1.0,1.0,1.0]))
+        let ls = new LightSource(new Float32Array([0, 50, 0]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
+        this.lightController = new LightController(this.gl,this.program, "directional", ls)
         
         this.camPosition = this.gl.getUniformLocation(this.program, "camPosition");
         this.gl.uniform3fv(this.camPosition, this.cameraController.camera.getCameraPosition());
