@@ -36,5 +36,5 @@ void main()
 
     vec3 surfaceWorldPosition = (mWorld * vec4(vertPosition,1.0)).xyz;
     v_surfaceToLight = normalize(u_lightWorldPosition - surfaceWorldPosition);
-    v_surfaceToView = camPosition+ surfaceWorldPosition;
+    v_surfaceToView = normalize(camPosition- surfaceWorldPosition);
 }

@@ -69,13 +69,13 @@ class Main {
         this.instanceAttributes = [[new PlanetAttribute(0.0, 0.0, 0.0)]]
 
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
-        let ls = new LightSource(new Float32Array([0, 50, 0]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
+        let ls = new LightSource(new Float32Array([-20, 50, -20]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
         this.lightController = new LightController(this.gl,this.program, "directional", ls)
         
         this.camPosition = this.gl.getUniformLocation(this.program, "camPosition");
         this.gl.uniform3fv(this.camPosition, this.cameraController.camera.getCameraPosition());
         var shininessLocation = this.gl.getUniformLocation(this.program, "u_shininess");
-        this.gl.uniform1f(shininessLocation, 500);
+        this.gl.uniform1f(shininessLocation, 50.0);
 
         //projector
         var lightDirectionLocation = this.gl.getUniformLocation(this.program, "u_lightDirection");
@@ -83,7 +83,7 @@ class Main {
         var lightWorldPositionLocation = this.gl.getUniformLocation(this.program, "u_lightWorldPosition");
         this.gl.uniform3fv(lightWorldPositionLocation, this.lightController.lightSource.lightPosition);
         var lmat = mat4.create();
-        var target = new Float32Array([-40, 20, 50]);
+        var target = new Float32Array([-20,-10,0]);
         var up = new Float32Array([0, 1, 0]);
         var lightRotationX = 0;
         var lightRotationY = 0;

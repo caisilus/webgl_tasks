@@ -18,6 +18,7 @@ uniform float u_shininess;
 uniform int f;
 uniform vec3 lColor;
 uniform vec3 lAmbient;
+uniform vec3 u_lightDirection;
         
 void main()
 {
@@ -35,13 +36,14 @@ void main()
     vec3 ambient = lAmbient * lColor;
     vec3 diffuse = light * lColor;
 
-    vec3 halfVector = normalize(v_surfaceToLight + v_surfaceToView);
+    vec3 r = reflect(u_lightDirection,fragNormal);
     float specular = 0.0;
     if (light > 0.0) {
-        specular = pow(dot(fragNormal, halfVector), u_shininess);
+        specular = pow(max(dot(v_surfaceToView, r),0.0), u_shininess);
     }
-
+    float specularStrength = 0.f; //коэффициент блика объекта
+    vec3 spec = specularStrength * specular * lColor;
     fragColor.rgb *=(diffuse+ambient);
-    fragColor.rgb += specular;
+    fragColor.rgb += spec;
 
 }
