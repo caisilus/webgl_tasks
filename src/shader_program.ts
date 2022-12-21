@@ -1,8 +1,13 @@
 import {Shader} from "./shader"
 
+interface HashMap<V> {
+    [key: string]: V
+}
+
 export class ShaderProgram {
     private gl: WebGL2RenderingContext;
     private linked: boolean
+    private cachedUniformLocations: HashMap<WebGLUniformLocation> = {};
     readonly program: WebGLProgram;
 
     constructor(gl: WebGL2RenderingContext) {
@@ -50,5 +55,20 @@ export class ShaderProgram {
 
     isLinked() {
         return this.linked;
+    }
+
+    getUniformLocation(name: string) {
+        if (name in this.cachedUniformLocations) {
+            return this.cachedUniformLocations[name];
+        }
+        
+        const location = this.gl.getUniformLocation(this.program, name);
+        
+        if (location == null) {
+            throw new Error("Cannot get uniform location");
+        }
+
+        this.cachedUniformLocations[name] = location;
+        return location;
     }
 }
