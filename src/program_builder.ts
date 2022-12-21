@@ -12,7 +12,7 @@ export class ProgramBuilder {
         this.fragmentShader = null;
     }
 
-    buildProgram(vertexShaderText: string, fragmentShaderText: string): WebGLProgram {
+    buildProgram(vertexShaderText: string, fragmentShaderText: string): ShaderProgram {
         let program = new ShaderProgram(this.gl);
         this.vertexShader = new Shader(this.gl, vertexShaderText, this.gl.VERTEX_SHADER);
         this.fragmentShader = new Shader(this.gl, fragmentShaderText, this.gl.FRAGMENT_SHADER);
@@ -22,9 +22,7 @@ export class ProgramBuilder {
 
         program.compileAndLink(true);
         
-        this.gl.useProgram(program.program); // TODO: shouldn't be here
-        
-        return program.program;
+        return program;
     }
 
     compileShaders() {

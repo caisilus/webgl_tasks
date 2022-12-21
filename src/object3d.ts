@@ -3,10 +3,11 @@ import {Transformator} from "../src/transformator";
 import {IAttributeExtractor} from "./attribute_extractor";
 import {IBufferable} from "../src/ibufferable";
 import {IndexDrawData} from "../src/draw_data";
+import { ShaderProgram } from "./shader_program";
 
 export class Object3D {
     protected gl: WebGL2RenderingContext
-    protected program: WebGLProgram;
+    protected program: ShaderProgram;
     protected vao: WebGLVertexArrayObject;
     protected drawer: Drawer
     protected numberOfInstances = 1;

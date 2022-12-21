@@ -1,11 +1,14 @@
+import { ShaderProgram } from "./shader_program";
+
 export class Texture{
     texnimber: number;
     texture: WebGLTexture | null;
     private imageLocation: WebGLUniformLocation | null;
 
-    constructor(readonly gl: WebGL2RenderingContext,readonly programm: WebGLProgram, sampler_name: string, num: number){
+    constructor(readonly gl: WebGL2RenderingContext, readonly program: ShaderProgram, 
+                sampler_name: string, num: number){
         this.gl = gl;
-        this.imageLocation = this.gl.getUniformLocation(programm, sampler_name);
+        this.imageLocation = program.getUniformLocation(sampler_name);
         this.texnimber = num;
         this.texture = null;
     }

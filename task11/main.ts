@@ -4,6 +4,7 @@ import vertexShader from "./shaders/shader_uniform.vert";
 import {Drawer} from "../src/drawer";
 import {ProgramBuilder} from "../src/program_builder";
 import {DrawDataCreator} from "./data_creator";
+import { ShaderProgram } from "../src/shader_program";
 
 class Main {
     gl: WebGL2RenderingContext;
@@ -11,7 +12,7 @@ class Main {
     drawer: Drawer;
     dataCreator: DrawDataCreator;
     programBuilder: ProgramBuilder;
-    program: WebGLProgram;
+    program: ShaderProgram;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas)
@@ -20,6 +21,7 @@ class Main {
         
         this.programBuilder = new ProgramBuilder(this.gl);
         this.program = this.programBuilder.buildProgram(vertexShader, fragmentShader);
+        this.gl.useProgram(this.program.program);
         this.drawer = new Drawer(this.gl, this.program);
         
         this.dataCreator = new DrawDataCreator(this.gl);
@@ -48,7 +50,7 @@ class Main {
         let figureName = this.selectedFigureName();
         let drawData = this.dataCreator.drawDataFromFigureName(figureName);
         let color: [number, number, number] = [0, 255, 0];
-        let location = this.gl.getUniformLocation(this.program, "figureColor");
+        let location = this.program.getUniformLocation("figureColor");
         let normalizedColor = [color[0] / 255.0, color[1] / 255.0, color[2] / 255.0];
         this.gl.uniform3fv(location, new Float32Array(normalizedColor));
         this.drawer.prepareVertices(drawData.attributeExtractor, drawData.vertices);

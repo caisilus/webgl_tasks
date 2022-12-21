@@ -4,10 +4,9 @@ import vertexShader from "./shaders/test_shader.vert";
 
 import {Drawer} from "../src/drawer";
 import {Camera} from "../src/camera";
-import {TextureController} from "../src/texture_controller";
-import {Transformator} from "../src/transformator";
+import {ShaderProgram} from "../src/shader_program";
+
 import { CameraController } from "../src/camera_controller";
-import { Loader } from "../src/obj_loader";
 import { IndexDrawData } from "../src/draw_data";
 import { ProgramBuilder } from "../src/program_builder";
 
@@ -19,7 +18,6 @@ import CatTex from '../src/images/Cat.jpg';
 import Spam from '../src/images/spam_BaseColor.jpg';
 import CoockedTexture from "../src/images/Cooked_Turkey.jpg";
 import { Texture } from "../src/texture";
-import { PlanetAttribute } from "../task13/instance_attributes";
 import { LightController } from "./light_controller";
 import { LightSource } from "./light_source";
 import { mat4 } from "gl-matrix";
@@ -28,9 +26,9 @@ import { LoadedObject } from "../src/loaded_object";
 
 class Main {
     gl: WebGL2RenderingContext;
-    phongProgram: WebGLProgram;
-    toonProgram: WebGLProgram;
-    program: WebGLProgram;
+    phongProgram: ShaderProgram;
+    toonProgram: ShaderProgram;
+    program: ShaderProgram;
     drawer: Drawer;
     camera: Camera;
     cameraController: CameraController;
@@ -53,7 +51,7 @@ class Main {
         
         // this.program = this.toonProgram;
         this.program = this.phongProgram;
-        this.gl.useProgram(this.program);
+        this.gl.useProgram(this.program.program);
         
         this.drawer = new Drawer(this.gl, this.program);
         
@@ -68,15 +66,15 @@ class Main {
         let ls = new LightSource(new Float32Array([-20, 50, -20]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
         this.lightController = new LightController(this.gl, this.program, "directional", ls)
         
-        this.camPosition = this.gl.getUniformLocation(this.program, "camPosition");
+        this.camPosition = this.program.getUniformLocation("camPosition");
         this.gl.uniform3fv(this.camPosition, this.camera.getCameraPosition());
-        var shininessLocation = this.gl.getUniformLocation(this.program, "u_shininess");
+        var shininessLocation = this.program.getUniformLocation("u_shininess");
         this.gl.uniform1f(shininessLocation, 50.0);
 
         //projector
-        var lightDirectionLocation = this.gl.getUniformLocation(this.program, "u_lightDirection");
-        var limitLocation = this.gl.getUniformLocation(this.program, "u_limit");
-        var lightWorldPositionLocation = this.gl.getUniformLocation(this.program, "u_lightWorldPosition");
+        var lightDirectionLocation = this.program.getUniformLocation("u_lightDirection");
+        var limitLocation = this.program.getUniformLocation("u_limit");
+        var lightWorldPositionLocation = this.program.getUniformLocation("u_lightWorldPosition");
         this.gl.uniform3fv(lightWorldPositionLocation, this.lightController.lightSource.lightPosition);
         var lmat = mat4.create();
         var target = new Float32Array([-20,-10,0]);
@@ -95,8 +93,8 @@ class Main {
         this.gl.uniform3fv(lightDirectionLocation, lightDirection);
         this.gl.uniform1f(limitLocation, Math.cos(this.degToRad(10)));
 
-        var innerLimitLocation = this.gl.getUniformLocation(this.program, "u_innerLimit");
-        var outerLimitLocation = this.gl.getUniformLocation(this.program, "u_outerLimit");
+        var innerLimitLocation = this.program.getUniformLocation("u_innerLimit");
+        var outerLimitLocation = this.program.getUniformLocation("u_outerLimit");
         this.gl.uniform1f(innerLimitLocation, Math.cos(this.degToRad(10)));
         this.gl.uniform1f(outerLimitLocation, Math.cos(this.degToRad(30)));
 

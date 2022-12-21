@@ -11,11 +11,12 @@ import {ControlMode} from "../src/control_mode";
 import {CircleMode} from "./circle_mode";
 import {CubeMode} from "./cube_mode";
 import {TetrahedronMode} from "./tetrahedron_mode";
+import { ShaderProgram } from "../src/shader_program";
 
 class Main {
     gl: WebGL2RenderingContext;
     select: HTMLSelectElement;
-    program: WebGLProgram;
+    program: ShaderProgram;
     drawer: Drawer;
     transformator: Transformator;
     camera: Camera;
@@ -31,6 +32,7 @@ class Main {
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         const programBuilder = new ProgramBuilder(this.gl);
         this.program = programBuilder.buildProgram(vertexShader, fragmentShader);
+        this.gl.useProgram(this.program.program);
         this.drawer = new Drawer(this.gl, this.program);
         this.transformator = new Transformator(this.gl, this.program);
         this.camera = new Camera(this.gl, this.program);

@@ -3,15 +3,16 @@ import {DataChangeFrequency, dataChangeFrequencyToGLconst,
 import {IBufferable} from "./ibufferable"
 import {IAttributeExtractor} from "./attribute_extractor";
 import {DrawData, IndexDrawData} from "./draw_data";
+import { ShaderProgram } from "./shader_program";
 
 export class Drawer {
     readonly gl: WebGL2RenderingContext;
-    readonly program: WebGLProgram;
+    readonly program: ShaderProgram;
     private vertexBuffer: FloatBuffer | null;
     private instanceAttributesBuffer: InstanceAttributesBuffer | null;
     private indexBufferObject: WebGLBuffer | null;
 
-    constructor(gl: WebGL2RenderingContext, program: WebGLProgram) {
+    constructor(gl: WebGL2RenderingContext, program: ShaderProgram) {
         this.gl = gl;
         this.program = program;
         this.vertexBuffer = null;
@@ -37,7 +38,7 @@ export class Drawer {
     private bindAttributesToBuffer(buffer: FloatBuffer, attributeExtractor: IAttributeExtractor) {
         let attributes = attributeExtractor.attributes(this.gl);
         for (let i = 0; i < attributes.length; i++) {
-            buffer.bindAttribute(attributes[i], this.program);
+            buffer.bindAttribute(attributes[i], this.program.program);
         }
     }
     

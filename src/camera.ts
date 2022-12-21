@@ -1,4 +1,5 @@
 import { glMatrix,vec3, mat3, mat4 } from "gl-matrix";
+import { ShaderProgram } from "./shader_program";
 
 export class Camera{
     private cameraPosition: Float32Array = new Float32Array([0, 0, -100]);
@@ -20,10 +21,10 @@ export class Camera{
     public pitch: number = 0;
     public yaw: number = 0;
 
-    constructor(readonly gl: WebGL2RenderingContext, readonly programm: WebGLProgram) {
+    constructor(readonly gl: WebGL2RenderingContext, readonly program: ShaderProgram) {
         this.gl = gl;
         this.aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-        this.matCameraUniformLocation = this.gl.getUniformLocation(programm, "mCamera");
+        this.matCameraUniformLocation = program.getUniformLocation("mCamera");
         this.matCamera = new Float32Array(16);
         this.matView = new Float32Array(16);
         this.matProj = new Float32Array(16);
@@ -158,8 +159,8 @@ export class Camera{
         return this.cameraPosition
     }
 
-    public changeProgram(program: WebGLProgram) {
-        this.gl.useProgram(program);
-        this.matCameraUniformLocation = this.gl.getUniformLocation(program, "mCamera");
+    public changeProgram(program: ShaderProgram) {
+        this.gl.useProgram(program.program);
+        this.matCameraUniformLocation = program.getUniformLocation("mCamera");
     }
 }

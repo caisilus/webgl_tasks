@@ -1,4 +1,5 @@
 import { glMatrix, mat4 } from "gl-matrix";
+import { ShaderProgram } from "./shader_program";
 
 export class Transformator{
     private matWorldUniformLocation: WebGLUniformLocation | null;
@@ -13,9 +14,9 @@ export class Transformator{
     private rotateMatrix: Float32Array = new Float32Array(16);
 
 
-    constructor(readonly gl: WebGL2RenderingContext, readonly programm: WebGLProgram) {
+    constructor(readonly gl: WebGL2RenderingContext, readonly program: ShaderProgram) {
         this.gl = gl;
-        this.matWorldUniformLocation = this.gl.getUniformLocation(programm, "mWorld");
+        this.matWorldUniformLocation = program.getUniformLocation("mWorld");
 
         this.matWorld = new Float32Array(16);
 

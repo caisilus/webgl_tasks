@@ -57,7 +57,7 @@ export class ShaderProgram {
         return this.linked;
     }
 
-    getUniformLocation(name: string) {
+    getUniformLocation(name: string): WebGLUniformLocation | null {
         if (name in this.cachedUniformLocations) {
             return this.cachedUniformLocations[name];
         }
@@ -65,7 +65,7 @@ export class ShaderProgram {
         const location = this.gl.getUniformLocation(this.program, name);
         
         if (location == null) {
-            throw new Error("Cannot get uniform location");
+            return null;
         }
 
         this.cachedUniformLocations[name] = location;

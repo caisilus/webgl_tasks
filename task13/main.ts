@@ -20,11 +20,12 @@ import { Texture } from "../src/texture";
 import { PlanetAttribute } from "./instance_attributes";
 import { Camera } from "../src/camera";
 import {LoadedObject} from "../src/loaded_object";
+import { ShaderProgram } from "../src/shader_program";
 
 
 class Main {
     gl: WebGL2RenderingContext;
-    program: WebGLProgram;
+    program: ShaderProgram;
     vaos: WebGLVertexArrayObject[] = [];
     drawer: Drawer;
     camera: Camera;
@@ -45,6 +46,7 @@ class Main {
         this.gl = this.get_gl(canvas);
         const programBuilder = new ProgramBuilder(this.gl);
         this.program = programBuilder.buildProgram(vertexShader, fragmentShader);
+        this.gl.useProgram(this.program.program);
 
         this.drawer = new Drawer(this.gl, this.program); 
         this.camera = new Camera(this.gl, this.program);
@@ -60,7 +62,7 @@ class Main {
         // this.transformator.rotate([0, 0, 90]);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
-        this.angleUniform = this.gl.getUniformLocation(this.program, "angle");
+        this.angleUniform = this.program.getUniformLocation("angle");
         this.configure_loop();
     }
 

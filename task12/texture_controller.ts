@@ -2,6 +2,7 @@ import {Texture} from "../src/texture";
 import Cat from '../src/images/cat.png';
 import Goodman from '../src/images/goodman.png';
 import Seal from '../src/images/seal.png';
+import { ShaderProgram } from "../src/shader_program";
 
 export class TextureController{
     private texturesMixLocation: WebGLUniformLocation | null;
@@ -12,13 +13,13 @@ export class TextureController{
     public textures_mix: number;
     public color_mix: number;
 
-    constructor(readonly gl: WebGL2RenderingContext, readonly programm: WebGLProgram) {
+    constructor(readonly gl: WebGL2RenderingContext, readonly program: ShaderProgram) {
         this.gl = gl;
-        this.programm = programm;
-        this.texturesMixLocation = this.gl.getUniformLocation(programm, "texturesMix");
-        this.colorMixLocation = this.gl.getUniformLocation(programm, "colorMix");
-        this.texture1 = new Texture(this.gl, this.programm, "u_texture1", 0);
-        this.texture2 = new Texture(this.gl, this.programm, "u_texture2", 1);
+        this.program = program;
+        this.texturesMixLocation = this.program.getUniformLocation("texturesMix");
+        this.colorMixLocation = this.program.getUniformLocation("colorMix");
+        this.texture1 = new Texture(this.gl, this.program, "u_texture1", 0);
+        this.texture2 = new Texture(this.gl, this.program, "u_texture2", 1);
         this.color_mix = 0.0;
         this.textures_mix = 1.0;
         this.set_color_mix();
