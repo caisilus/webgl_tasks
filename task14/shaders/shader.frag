@@ -9,7 +9,6 @@ out vec4 fragColor;
 in vec3 v_surfaceToLight;
 in vec3 v_surfaceToView;
 uniform sampler2D u_texture1;
-uniform sampler2D u_texture2;
 
 uniform float texturesMix;
 uniform float colorMix;
@@ -25,8 +24,7 @@ void main()
     //fragColor = vec4(fragNormal,1.0);
 
     vec4 tex_col1 = texture(u_texture1, fragTexCoord);
-    vec4 tex_col2 = texture(u_texture2, fragTexCoord);
-    fragColor =  mix(mix(tex_col1, tex_col2, texturesMix), vec4(color, 1.0), colorMix);
+    fragColor =  mix(tex_col1, vec4(color, 1.0), colorMix);
     vec3 ratio = v_surfaceToLight;
     if (f==0){
         ratio = normalize(u_reverseLightDirection);

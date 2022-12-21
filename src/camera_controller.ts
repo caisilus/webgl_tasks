@@ -14,10 +14,10 @@ export class CameraController{
     startMousePosition: vec2 = vec2.create();
     endMousePosition: vec2 = vec2.create();
 
-    constructor(readonly gl: WebGL2RenderingContext, readonly programm: WebGLProgram)
+    constructor(readonly gl: WebGL2RenderingContext, camera: Camera)
     {
         this.canvas = gl.canvas as HTMLCanvasElement;
-        this.camera = new Camera(gl, programm);
+        this.camera = camera;
         
 
         document.addEventListener("mousedown", (e) => { this.mouse_button_down(e); }, false);

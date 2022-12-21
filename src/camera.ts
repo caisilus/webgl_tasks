@@ -153,7 +153,13 @@ export class Camera{
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
     }
+
     public getCameraPosition(){
         return this.cameraPosition
+    }
+
+    public changeProgram(program: WebGLProgram) {
+        this.gl.useProgram(program);
+        this.matCameraUniformLocation = this.gl.getUniformLocation(program, "mCamera");
     }
 }

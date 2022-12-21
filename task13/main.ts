@@ -18,7 +18,7 @@ import SpanTexture from '../src/images/spam_BaseColor.jpg';
 import CoockedTexture from "../src/images/Cooked_Turkey.jpg";
 import { Texture } from "../src/texture";
 import { PlanetAttribute } from "./instance_attributes";
-
+import { Camera } from "../src/camera";
 import {LoadedObject} from "../src/loaded_object";
 
 
@@ -27,8 +27,8 @@ class Main {
     program: WebGLProgram;
     vaos: WebGLVertexArrayObject[] = [];
     drawer: Drawer;
+    camera: Camera;
     cameraController: CameraController;
-    textureController: TextureController;
     turkey: LoadedObject;
     span: LoadedObject;
 
@@ -47,11 +47,10 @@ class Main {
         this.program = programBuilder.buildProgram(vertexShader, fragmentShader);
 
         this.drawer = new Drawer(this.gl, this.program); 
-        this.cameraController = new CameraController(this.gl, this.program);
-        this.textureController = new TextureController(this.gl, this.program);
-        
-        this.turkey = new LoadedObject(this.drawer, this.textureController, CoockedTurkey, CoockedTexture);
-        this.span = new LoadedObject(this.drawer, this.textureController, Span, SpanTexture);
+        this.camera = new Camera(this.gl, this.program);
+        this.cameraController = new CameraController(this.gl, this.camera);
+        this.turkey = new LoadedObject(this.drawer, CoockedTurkey, CoockedTexture);
+        this.span = new LoadedObject(this.drawer, Span, SpanTexture);
         this.instanceAttributes = [new PlanetAttribute(40.0, 1.0, 1.0), 
                                    new PlanetAttribute(60.0, 2.0, 0.2)]
         this.span.createInstances(PlanetAttribute, this.instanceAttributes);

@@ -3,6 +3,7 @@ import toonShader from "./shaders/toon_shader.frag";
 import vertexShader from "./shaders/test_shader.vert";
 
 import {Drawer} from "../src/drawer";
+import {Camera} from "../src/camera";
 import {TextureController} from "../src/texture_controller";
 import {Transformator} from "../src/transformator";
 import { CameraController } from "../src/camera_controller";
@@ -31,8 +32,8 @@ class Main {
     toonProgram: WebGLProgram;
     program: WebGLProgram;
     drawer: Drawer;
+    camera: Camera;
     cameraController: CameraController;
-    textureController: TextureController;
     cat: LoadedObject;
     lightController: LightController;
     textures: {[key:number]: Texture} = {};
@@ -46,23 +47,29 @@ class Main {
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas);
         const programBuilder = new ProgramBuilder(this.gl);
+        
         this.phongProgram = programBuilder.buildProgram(vertexShader, phongShader);
         this.toonProgram = programBuilder.buildProgram(vertexShader, toonShader);
-        this.program = this.toonProgram;
+        
+        // this.program = this.toonProgram;
+        this.program = this.phongProgram;
         this.gl.useProgram(this.program);
+        
         this.drawer = new Drawer(this.gl, this.program);
         
-        this.cameraController = new CameraController(this.gl, this.program);
-        this.cameraController.camera.setPosition(0, 10, -100);
-        this.textureController = new TextureController(this.gl, this.program);
-        this.cat = new LoadedObject(this.drawer, this.textureController, Cat, CatTex);
+        this.camera = new Camera(this.gl, this.program);
+        this.cameraController = new CameraController(this.gl, this.camera);
+        this.camera.setPosition(0, 10, -100);
+        
+        // this.textureController = new TextureController(this.gl, this.program);
+        this.cat = new LoadedObject(this.drawer, Cat, CatTex);
 
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         let ls = new LightSource(new Float32Array([-20, 50, -20]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
         this.lightController = new LightController(this.gl, this.program, "directional", ls)
         
         this.camPosition = this.gl.getUniformLocation(this.program, "camPosition");
-        this.gl.uniform3fv(this.camPosition, this.cameraController.camera.getCameraPosition());
+        this.gl.uniform3fv(this.camPosition, this.camera.getCameraPosition());
         var shininessLocation = this.gl.getUniformLocation(this.program, "u_shininess");
         this.gl.uniform1f(shininessLocation, 50.0);
 

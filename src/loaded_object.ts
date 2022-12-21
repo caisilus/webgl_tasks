@@ -9,10 +9,8 @@ export class LoadedObject extends Object3D {
     private loader: Loader;
     private texture: Texture | null;
 
-    constructor(drawer: Drawer, private textureControler: TextureController, 
-                private modelUrl: string, private textureUrl: string | null = null) {
+    constructor(drawer: Drawer, private modelUrl: string, private textureUrl: string | null = null) {
         super(drawer);
-        this.textureControler = textureControler;
         this.modelUrl = modelUrl;
         this.textureUrl = textureUrl;
         this.loader = new Loader(this.gl);
@@ -51,8 +49,9 @@ export class LoadedObject extends Object3D {
         }
         
         if (this.texture != null) {
-            this.textureControler.texture1 = this.texture;
-            this.textureControler.bind_textures();
+            this.texture.bind();
+            // this.textureControler.texture1 = this.texture;
+            // this.textureControler.bind_textures();
         }
         super.draw();
     }
