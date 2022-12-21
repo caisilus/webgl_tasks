@@ -20,7 +20,6 @@ in float angularSpeed;
 
 uniform mat4 mWorld;
 uniform mat4 mCamera;
-uniform float angle;
 
 uniform vec3 u_lightWorldPosition;
 uniform vec3 camPosition;
@@ -28,10 +27,8 @@ uniform vec3 camPosition;
 void main()
 {
     fragTexCoord = vertTexCoord;
-    vec4 offset = vec4(radius * cos(startingAngle + angularSpeed * angle), 
-                       radius * sin(startingAngle + angularSpeed * angle), 0, 1.0);
-    fragNormal = (mWorld * vec4(vertNormal,0.0)).xyz + offset.xyz;
-    gl_Position = mCamera * (mWorld * vec4(vertPosition, 1.0) + offset);
+    fragNormal = (mWorld * vec4(vertNormal,0.0)).xyz;
+    gl_Position = mCamera * (mWorld * vec4(vertPosition, 1.0));
     color = vertColor;
 
     vec3 surfaceWorldPosition = (mWorld * vec4(vertPosition,1.0)).xyz;

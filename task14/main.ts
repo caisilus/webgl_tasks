@@ -1,4 +1,5 @@
-import fragmentShader from "./shaders/shader.frag";
+import phongShader from "./shaders/shader.frag";
+import toonShader from "./shaders/toon_shader.frag";
 import vertexShader from "./shaders/test_shader.vert";
 
 import {Drawer} from "../src/drawer";
@@ -26,6 +27,8 @@ import { LoadedObject } from "../src/loaded_object";
 
 class Main {
     gl: WebGL2RenderingContext;
+    phongProgram: WebGLProgram;
+    toonProgram: WebGLProgram;
     program: WebGLProgram;
     drawer: Drawer;
     cameraController: CameraController;
@@ -36,15 +39,17 @@ class Main {
     data: {[key:number]: IndexDrawData} = {}; 
     
     num_instances: number[] = [1];
-    angleUniform: WebGLUniformLocation | null;
-
+    
     select:HTMLSelectElement;
     camPosition: WebGLUniformLocation|null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas);
         const programBuilder = new ProgramBuilder(this.gl);
-        this.program = programBuilder.buildProgram(vertexShader, fragmentShader);
+        this.phongProgram = programBuilder.buildProgram(vertexShader, phongShader);
+        this.toonProgram = programBuilder.buildProgram(vertexShader, toonShader);
+        this.program = this.toonProgram;
+        this.gl.useProgram(this.program);
         this.drawer = new Drawer(this.gl, this.program);
         
         this.cameraController = new CameraController(this.gl, this.program);
@@ -92,7 +97,6 @@ class Main {
         this.cat.transformator.rotate([0, 0, 90]);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
-        this.angleUniform = this.gl.getUniformLocation(this.program, "angle");
         this.select.addEventListener('change', (e) => { this.onSelectChange(e); });
         this.configure_loop();
     }
@@ -137,7 +141,7 @@ class Main {
                 this.lightController.switch_mode("point");
                 break;
             }
-            case "Прожекторр": {
+            case "Прожектор": {
                 this.lightController.switch_mode("projector");
                 break;
             }

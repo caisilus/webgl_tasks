@@ -22,28 +22,34 @@ uniform vec3 u_lightDirection;
         
 void main()
 {
-    //fragColor = vec4(fragNormal,1.0);
-
     vec4 tex_col1 = texture(u_texture1, fragTexCoord);
     vec4 tex_col2 = texture(u_texture2, fragTexCoord);
     fragColor =  mix(mix(tex_col1, tex_col2, texturesMix), vec4(color, 1.0), colorMix);
+    
     vec3 ratio = v_surfaceToLight;
     if (f==0){
         ratio = normalize(u_reverseLightDirection);
     }
 
     float light = max(dot(fragNormal, ratio),0.0);
-    vec3 ambient = lAmbient * lColor;
-    vec3 diffuse = light * lColor;
-
-    vec3 r = reflect(u_lightDirection,fragNormal);
-    float specular = 0.0;
-    if (light > 0.0) {
-        specular = pow(max(dot(v_surfaceToView, r),0.0), u_shininess);
+    float diff = 0.2 + light;
+    
+    if (diff < 0.4) {
+        fragColor.rgb *= 0.3;
     }
-    float specularStrength = 0.f; //коэффициент блика объекта
-    vec3 spec = specularStrength * specular * lColor;
-    fragColor.rgb *=(diffuse+ambient);
-    fragColor.rgb += spec;
+    else 
+    if (diff < 0.5) {
+        fragColor.rgb *= 0.5;
+    }
+    else
+    if (diff < 0.7) {
+        fragColor.rgb *= 1.0;
+    }
+    else{
+        fragColor.rgb *= 1.3;
+    }
+    // vec3 ambient = lAmbient * lColor;
+    // vec3 diffuse = light * lColor;
 
+    // fragColor.rgb *= (diffuse + ambient);
 }
