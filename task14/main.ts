@@ -53,6 +53,7 @@ class Main {
         this.drawer = new Drawer(this.gl, this.program);
         
         this.cameraController = new CameraController(this.gl, this.program);
+        this.cameraController.camera.setPosition(0, 10, -100);
         this.textureController = new TextureController(this.gl, this.program);
         this.cat = new LoadedObject(this.drawer, this.textureController, Cat, CatTex);
 

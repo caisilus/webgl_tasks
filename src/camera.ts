@@ -47,7 +47,7 @@ export class Camera{
         this.pitch = Math.asin(this.cameraDirection[1]);
         this.yaw = Math.atan2(this.cameraDirection[2], this.cameraDirection[0]);
     }
-    
+
     private coutDiection(pitch: number, yaw: number) {
         this.cameraDirection = new Float32Array(3);
         this.cameraDirection[0] = Math.cos(pitch) * Math.cos(yaw);
@@ -70,13 +70,25 @@ export class Camera{
         mat4.perspective(this.matProj, glMatrix.toRadian(this.fovDegrees), this.aspect, this.zNear, this.zFar);
     }
 
+    public setPosition(x: number, y: number, z: number) {
+        let dx = x - this.cameraPosition[0];
+        let dy = y - this.cameraPosition[1];
+        let dz = z - this.cameraPosition[2];
+        this.moveCamera(dx, dy, dz);
+    }
+
     public moveCamera(x: number, y: number, z: number) {
         this.cameraPosition[0] += x;
         this.cameraPosition[1] += y;
         this.cameraPosition[2] += z;
+
+        this.cameraTarget[0] += x;
+        this.cameraTarget[1] += y;
+        this.cameraTarget[2] += z;
         this.setUpView();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
+        this.countDirection();
     }
 
     public moveForward(d: number){

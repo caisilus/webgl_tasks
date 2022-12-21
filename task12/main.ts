@@ -34,6 +34,7 @@ class Main {
         this.drawer = new Drawer(this.gl, this.program);
         this.transformator = new Transformator(this.gl, this.program);
         this.camera = new Camera(this.gl, this.program);
+        this.camera.setPosition(0, 0, -7);
         this.textureController = new TextureController(this.gl, this.program);
         this.textureController.load_textures();
         this.dataCreator = new DrawDataCreator(this.gl);
