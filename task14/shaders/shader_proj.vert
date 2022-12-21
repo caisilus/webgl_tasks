@@ -33,8 +33,8 @@ void main()
     fragNormal = (mWorld * vec4(vertNormal,0.0)).xyz + offset.xyz;
     gl_Position = mCamera * (mWorld * vec4(vertPosition, 1.0) + offset);
     color = vertColor;
-
     vec3 surfaceWorldPosition = (mWorld * vec4(vertPosition,1.0)).xyz;
-    v_surfaceToLight = normalize(u_lightWorldPosition - surfaceWorldPosition);
-    v_surfaceToView = normalize(camPosition- surfaceWorldPosition);
+
+    v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+    v_surfaceToView = camPosition+ surfaceWorldPosition;
 }

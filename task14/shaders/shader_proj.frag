@@ -15,10 +15,12 @@ uniform float texturesMix;
 uniform float colorMix;
 uniform vec3 u_reverseLightDirection;
 uniform float u_shininess;
-uniform int f;
 uniform vec3 lColor;
 uniform vec3 lAmbient;
 uniform vec3 u_lightDirection;
+uniform float u_limit;  
+uniform float u_innerLimit; 
+uniform float u_outerLimit;
         
 void main()
 {
@@ -27,23 +29,24 @@ void main()
     vec4 tex_col1 = texture(u_texture1, fragTexCoord);
     vec4 tex_col2 = texture(u_texture2, fragTexCoord);
     fragColor =  mix(mix(tex_col1, tex_col2, texturesMix), vec4(color, 1.0), colorMix);
-    vec3 ratio = v_surfaceToLight;
-    if (f==0){
-         ratio = normalize(u_reverseLightDirection);
-    }
 
-    float light = max(dot(fragNormal, ratio),0.0);
+
+    vec3 surfaceToLightDirection = v_surfaceToLight;
+    vec3 surfaceToViewDirection = v_surfaceToView;
+    vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
+
+    float dotFromDirection = dot(surfaceToLightDirection,-u_lightDirection);
+    float limitRange = u_innerLimit - u_outerLimit;
+    float inLight = clamp((dotFromDirection - u_outerLimit) / limitRange, 0.0, 1.0);
+
+    float light = max(inLight *dot(fragNormal, surfaceToLightDirection),0.0);
     vec3 ambient = lAmbient * lColor;
     vec3 diffuse = light * lColor;
-
     vec3 r = reflect(u_lightDirection,fragNormal);
-    float specular = 0.0;
-    if (light > 0.0) {
-        specular = pow(max(dot(v_surfaceToView, r),0.0), u_shininess);
-    }
-    float specularStrength = 0.f; //коэффициент блика объекта
+    float specular = inLight * pow(max(dot(v_surfaceToView, r),0.0), u_shininess);
+    float specularStrength = 0.4f; //коэффициент блика объекта
     vec3 spec = specularStrength * specular * lColor;
+
     fragColor.rgb *=(diffuse+ambient);
     fragColor.rgb += spec;
-
 }
