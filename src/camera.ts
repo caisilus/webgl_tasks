@@ -47,6 +47,7 @@ export class Camera{
         this.pitch = Math.asin(this.cameraDirection[1]);
         this.yaw = Math.atan2(this.cameraDirection[2], this.cameraDirection[0]);
     }
+    
     private coutDiection(pitch: number, yaw: number) {
         this.cameraDirection = new Float32Array(3);
         this.cameraDirection[0] = Math.cos(pitch) * Math.cos(yaw);

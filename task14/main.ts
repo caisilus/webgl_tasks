@@ -5,7 +5,7 @@ import vertexShader from "./shaders/test_shader.vert";
 import {Drawer} from "../src/drawer";
 import {TextureController} from "../src/texture_controller";
 import {Transformator} from "../src/transformator";
-import { CameraController } from "../task13/camera_controller";
+import { CameraController } from "../src/camera_controller";
 import { Loader } from "../src/obj_loader";
 import { IndexDrawData } from "../src/draw_data";
 import { ProgramBuilder } from "../src/program_builder";
@@ -58,7 +58,7 @@ class Main {
 
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         let ls = new LightSource(new Float32Array([-20, 50, -20]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
-        this.lightController = new LightController(this.gl,this.program, "directional", ls)
+        this.lightController = new LightController(this.gl, this.program, "directional", ls)
         
         this.camPosition = this.gl.getUniformLocation(this.program, "camPosition");
         this.gl.uniform3fv(this.camPosition, this.cameraController.camera.getCameraPosition());

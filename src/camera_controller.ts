@@ -1,4 +1,4 @@
-import {Camera} from "../src/camera";
+import {Camera} from "./camera";
 import {vec2} from "gl-matrix";
 
 export class CameraController{

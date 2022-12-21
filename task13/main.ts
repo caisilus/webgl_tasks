@@ -4,7 +4,7 @@ import vertexShader from "./shaders/test_shader.vert";
 import {Drawer} from "../src/drawer";
 import {TextureController} from "../src/texture_controller";
 import {Transformator} from "../src/transformator";
-import { CameraController } from "./camera_controller";
+import { CameraController } from "../src/camera_controller";
 import { Loader } from "../src/obj_loader";
 import { IndexDrawData } from "../src/draw_data";
 import { ProgramBuilder } from "../src/program_builder";
