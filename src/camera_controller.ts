@@ -4,8 +4,9 @@ import {vec2} from "gl-matrix";
 export class CameraController{
     camera: Camera;
     canvas: HTMLCanvasElement;
-    cameraMoveSpeed: number = 1;
+    cameraMoveSpeed: number = 10;
     cameraRotationSpeed: number = 0.1;
+
 
     drag: boolean = false;
     oldAngels: Array<number> = [0, 0];
@@ -13,6 +14,7 @@ export class CameraController{
 
     startMousePosition: vec2 = vec2.create();
     endMousePosition: vec2 = vec2.create();
+    
 
     constructor(readonly gl: WebGL2RenderingContext, camera: Camera)
     {

@@ -1,6 +1,7 @@
-import phongShader from "./shaders/shader.frag";
+import phongShader from "./shaders/fong_shader.frag";
 import toonShader from "./shaders/toon_shader.frag";
-import vertexShader from "./shaders/test_shader.vert";
+import bidirectShader from "./shaders/bidir_shader.frag";
+import vertexShader from "./shaders/shader.vert";
 
 import {Drawer} from "../src/drawer";
 import {Camera} from "../src/camera";
@@ -12,14 +13,18 @@ import { ProgramBuilder } from "../src/program_builder";
 
 import Cat from "../static/objects/Cat.obj";
 import Span from "../static/objects/spam.obj";
-import CoockedTurkey from "../static/objects/Cooked_Turkey.obj";
+import Grass from "../static/objects/Grass.obj";
+import Gun from "../static/objects/Gun.obj";
 
 import CatTex from '../src/images/Cat.jpg';
-import Spam from '../src/images/spam_BaseColor.jpg';
-import CoockedTexture from "../src/images/Cooked_Turkey.jpg";
+import SpanTex from '../src/images/spam_BaseColor.jpg';
+import GrassTex from '../src/images/Grass_BaseColor.jpg';
+import GunTex from '../src/images/Gun.png';
+
 import { Texture } from "../src/texture";
 import { LightController } from "./light_controller";
 import { LightSource } from "./light_source";
+import { SpotLightSource } from "./spot_light_source";
 import { mat4 } from "gl-matrix";
 import { LoadedObject } from "../src/loaded_object";
 
@@ -28,79 +33,93 @@ class Main {
     gl: WebGL2RenderingContext;
     phongProgram: ShaderProgram;
     toonProgram: ShaderProgram;
+    bidirectProgram: ShaderProgram;
     program: ShaderProgram;
     drawer: Drawer;
     camera: Camera;
     cameraController: CameraController;
+    grass: LoadedObject;
     cat: LoadedObject;
+    gun: LoadedObject;
     lightController: LightController;
     textures: {[key:number]: Texture} = {};
     data: {[key:number]: IndexDrawData} = {}; 
     
-    num_instances: number[] = [1];
-    
     select:HTMLSelectElement;
-    camPosition: WebGLUniformLocation|null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas);
+        this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         const programBuilder = new ProgramBuilder(this.gl);
         
         this.phongProgram = programBuilder.buildProgram(vertexShader, phongShader);
         this.toonProgram = programBuilder.buildProgram(vertexShader, toonShader);
+        this.bidirectProgram = programBuilder.buildProgram(vertexShader, bidirectShader);
         
-        // this.program = this.toonProgram;
-        this.program = this.phongProgram;
+        
+        this.program = this.toonProgram;
+        //this.program = this.phongProgram;
+        //this.program = this.bidirectProgram;
         this.gl.useProgram(this.program.program);
         
         this.drawer = new Drawer(this.gl, this.program);
         
         this.camera = new Camera(this.gl, this.program);
         this.cameraController = new CameraController(this.gl, this.camera);
-        this.camera.setPosition(0, 10, -100);
+        this.camera.setPosition(0, 50, -200);
         
-        // this.textureController = new TextureController(this.gl, this.program);
         this.cat = new LoadedObject(this.drawer, Cat, CatTex);
+        this.cat.transformator.setdDefaultScaling();
+        this.cat.transformator.translate(0, 10, 0);
+        this.cat.transformator.rotate([270, 0, 180]);
 
-        this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
-        let ls = new LightSource(new Float32Array([-20, 50, -20]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
-        this.lightController = new LightController(this.gl, this.program, "directional", ls)
-        
-        this.camPosition = this.program.getUniformLocation("camPosition");
-        this.gl.uniform3fv(this.camPosition, this.camera.getCameraPosition());
+        this.grass = new LoadedObject(this.drawer, Grass, GrassTex);
+        this.grass.transformator.setdDefaultScaling();
+        this.grass.transformator.setDefaultTranslation();
+        this.grass.transformator.rotate([270, 0, 0]);
+
+        this.gun = new LoadedObject(this.drawer, Gun, GunTex);
+        this.gun.transformator.translate(0.19, 0.47, 0);
+        this.gun.transformator.scale(50, 50, 50);
+        this.gun.transformator.rotate([0, 270, 0]);
+
+        let ls0 = new LightSource(
+            [0, 50, 500], // lightPosition
+            [0.2,0.0,0.0], // lightAmbient
+            [0.2,0.2,0.2], // lightDiffuse
+            [1,1,1], // lightSpecular
+        );
+        let ls1 = new LightSource(
+            [-500, -500, 0], // lightPosition
+            [0.0,0.0,0.2], // lightAmbient
+            [0.2,0.2,0.2], // lightDiffuse
+            [1,1,1], // lightSpecular
+        );
+
+        let spls0 = new SpotLightSource(            
+            [0, 200, 0], // lightPosition
+            [0, 0, 0], // lightTarget
+            5, //lightLimit
+            [0.2,0.0,0.0], // lightAmbient
+            [0.2,0.2,0.2], // lightDiffuse
+            [1,1,1], // lightSpecular
+        );
+
+        let spls1 = new SpotLightSource(            
+            [0, 50, -200], // lightPosition
+            [0, 50, 0], // lightTarget
+            5, //lightLimit
+            [0.2,0.0,0.0], // lightAmbient
+            [0.2,0.2,0.2], // lightDiffuse
+            [1,1,1], // lightSpecular
+        );
+        this.lightController = new LightController(this.gl, this.program, "directional", ls0)
+        this.lightController.add_light_source(ls1);
+        this.lightController.add_spotlight_source(spls0);
+        this.lightController.add_spotlight_source(spls1);
         var shininessLocation = this.program.getUniformLocation("u_shininess");
         this.gl.uniform1f(shininessLocation, 50.0);
-
-        //projector
-        var lightDirectionLocation = this.program.getUniformLocation("u_lightDirection");
-        var limitLocation = this.program.getUniformLocation("u_limit");
-        var lightWorldPositionLocation = this.program.getUniformLocation("u_lightWorldPosition");
-        this.gl.uniform3fv(lightWorldPositionLocation, this.lightController.lightSource.lightPosition);
-        var lmat = mat4.create();
-        var target = new Float32Array([-20,-10,0]);
-        var up = new Float32Array([0, 1, 0]);
-        var lightRotationX = 0;
-        var lightRotationY = 0;
-        mat4.lookAt(lmat, this.lightController.lightSource.lightPosition, target, up);
-        let x = mat4.create();
-        mat4.fromXRotation(x, lightRotationX);
-        mat4.multiply(lmat, x, lmat);
-        let y = mat4.create();
-        mat4.fromYRotation(y,lightRotationY)
-        mat4.multiply(lmat,y, lmat);
-        let lightDirection = [-lmat[8], -lmat[9],-lmat[10]];
-    
-        this.gl.uniform3fv(lightDirectionLocation, lightDirection);
-        this.gl.uniform1f(limitLocation, Math.cos(this.degToRad(10)));
-
-        var innerLimitLocation = this.program.getUniformLocation("u_innerLimit");
-        var outerLimitLocation = this.program.getUniformLocation("u_outerLimit");
-        this.gl.uniform1f(innerLimitLocation, Math.cos(this.degToRad(10)));
-        this.gl.uniform1f(outerLimitLocation, Math.cos(this.degToRad(30)));
-
-        this.cat.transformator.setdDefaultScaling();
-        this.cat.transformator.setDefaultTranslation();
-        this.cat.transformator.rotate([0, 0, 90]);
+        
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
         this.select.addEventListener('change', (e) => { this.onSelectChange(e); });
@@ -127,11 +146,9 @@ class Main {
 
     update() {
         this.drawer.clearBg();
-        
-        this.cat.transformator.rotate([-90 + performance.now() / 1000.0 * 0,
-        0,
-        0 + performance.now() / 5 / 1000.0 * 60]);
+        this.grass.draw();
         this.cat.draw();
+        this.gun.draw();
         requestAnimationFrame(() => {this.update()});
     }
 

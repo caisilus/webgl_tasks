@@ -67,7 +67,7 @@ export class Drawer {
     }
 
     drawIndex(drawData: IndexDrawData) {
-        this.clearBg();
+        //this.clearBg();
 
         if (this.indexBufferObject == null) {
             throw new Error("Index buffer not initialized");
@@ -77,7 +77,7 @@ export class Drawer {
     }
 
     drawInstances(drawData: DrawData, numberOfInstances: number) {
-        this.clearBg();
+        //this.clearBg();
         
         if (this.vertexBuffer == null || this.instanceAttributesBuffer == null){
             throw new Error("Vertex or instance buffer is not initialized");

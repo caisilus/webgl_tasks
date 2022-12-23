@@ -14,6 +14,7 @@ export class Camera{
     private zFar: number = 1000;
 
     private matCameraUniformLocation: WebGLUniformLocation | null;
+    private camPositionLocation: WebGLUniformLocation | null;
     private matCamera: Float32Array;
     private matView: Float32Array;
     private matProj: Float32Array;
@@ -32,6 +33,7 @@ export class Camera{
         this.setUpProjection();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
+        this.camPositionLocation = this.program.getUniformLocation("camPosition");
 
         this.cameraDirection = new Float32Array(3);
         this.countDirection();
@@ -82,6 +84,7 @@ export class Camera{
         this.cameraPosition[0] += x;
         this.cameraPosition[1] += y;
         this.cameraPosition[2] += z;
+        this.gl.uniform3fv(this.camPositionLocation, this.cameraPosition);
 
         this.cameraTarget[0] += x;
         this.cameraTarget[1] += y;
