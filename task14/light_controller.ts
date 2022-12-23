@@ -9,10 +9,10 @@ export class LightController {
     currentMode: string;
     gl: WebGL2RenderingContext;
     //Направление глобального света
-    globalLightDirection: number[] = [0.0,0.5,0.0];
+    globalLightDirection: number[] = [0.0,1,0.0];
     globalLightAmbient: number[] = [0.1,0.1,0.1];
-    globalLightDiffuse: number[] = [0.5,0.5,0.5];
-    globalLightSpecular: number[] = [0.9,0.9,0.9];
+    globalLightDiffuse: number[] = [0.7,0.7,0.7];
+    globalLightSpecular: number[] = [1.0,1.0,1.0];
 
     //Параметры точечных источников света
     lightSourcesNumLocation : WebGLUniformLocation | null;

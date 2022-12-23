@@ -15,17 +15,20 @@ import Cat from "../static/objects/Cat.obj";
 import Span from "../static/objects/spam.obj";
 import Grass from "../static/objects/Grass.obj";
 import Gun from "../static/objects/Gun.obj";
+import Cattle from "../static/objects/cattle.obj";
+import Turkey from "../static/objects/Cooked_Turkey.obj";
 
 import CatTex from '../src/images/Cat.jpg';
 import SpanTex from '../src/images/spam_BaseColor.jpg';
 import GrassTex from '../src/images/Grass_BaseColor.jpg';
 import GunTex from '../src/images/Gun.png';
+import WoodTex from '../src/images/WoodTex2.jpeg';
+import TurkeyTex from '../src/images/Cooked_Turkey.jpg';
 
 import { Texture } from "../src/texture";
 import { LightController } from "./light_controller";
 import { LightSource } from "./light_source";
 import { SpotLightSource } from "./spot_light_source";
-import { mat4 } from "gl-matrix";
 import { LoadedObject } from "../src/loaded_object";
 
 
@@ -40,6 +43,8 @@ class Main {
     grass: LoadedObject;
     cat: LoadedObject;
     gun: LoadedObject;
+    span: LoadedObject;
+    turkey: LoadedObject;
     lightController: LightController;
     phongLightController: LightController;
     toonLightController: LightController;
@@ -65,9 +70,9 @@ class Main {
         this.bidirectProgram = programBuilder.buildProgram(vertexShader, bidirectShader);
         
         
-        // this.program = this.toonProgram;
-        // this.program = this.phongProgram;
-        this.program = this.bidirectProgram;
+        //this.program = this.toonProgram;
+        this.program = this.phongProgram;
+        //this.program = this.bidirectProgram;
         this.gl.useProgram(this.program.program);
         
         this.camera = new Camera(this.gl, this.program);
@@ -89,6 +94,16 @@ class Main {
         this.gun.transformator.scale(50, 50, 50);
         this.gun.transformator.rotate([0, 270, 0]);
 
+        this.span = LoadedObject.fromProgram(this.toonProgram, Span, SpanTex);
+        this.span.transformator.translate(10, 5, 0);
+        this.span.transformator.scale(5, 5, 5);
+        this.span.transformator.rotate([0, 210, 0]);
+
+        this.turkey = LoadedObject.fromProgram(this.phongProgram, Turkey, TurkeyTex);
+        this.turkey.transformator.translate(50, 1, -50);
+        this.turkey.transformator.scale(1, 1, 1);
+        this.turkey.transformator.rotate([-90, 0, 70]);
+
         let ls0 = new LightSource(
             [0, 50, 500], // lightPosition
             [0.2,0.0,0.0], // lightAmbient
@@ -105,7 +120,7 @@ class Main {
         let spls0 = new SpotLightSource(            
             [0, 200, 0], // lightPosition
             [0, 0, 0], // lightTarget
-            5, //lightLimit
+            20, //lightLimit
             [0.2,0.0,0.0], // lightAmbient
             [0.2,0.2,0.2], // lightDiffuse
             [1,1,1], // lightSpecular
@@ -142,7 +157,6 @@ class Main {
         
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
-        this.select.addEventListener('change', (e) => { this.onSelectChange(e); });
         this.configure_loop();
     }
 
@@ -168,10 +182,13 @@ class Main {
         console.log("checkbox data: " + this.activeLightSources());
         Drawer.clearBg(this.gl);
         this.changeProgram(this.phongProgram, this.phongLightController);
-        
+        this.turkey.draw();
         this.grass.draw();
+        
         this.changeProgram(this.toonProgram, this.toonLightController);
         this.cat.draw();
+        this.span.draw();
+        
         this.changeProgram(this.bidirectProgram, this.bidirectionalLightController);
         this.gun.draw();
         requestAnimationFrame(() => {this.update()});
