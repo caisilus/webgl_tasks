@@ -24,6 +24,12 @@ uniform vec3[10] lAmbient;
 uniform vec3[10] lDiffuse;
 uniform vec3[10] lSpecular;
 
+//Параметры направленного света
+in vec3[10] toslDirection;
+uniform int num_spotlightsF;
+uniform vec3[10] slDirection;
+uniform float[10] slLimit;
+
 uniform bool globalLight;
 uniform bool pointLight;
 uniform bool spotLight;
@@ -70,4 +76,34 @@ void main()
             fragColor.rgb += specular;
         }
     }
+
+    if (spotLight)
+    {
+        for (int i = 0; i < num_spotlightsF; i++)
+        {
+            vec3 l = normalize(toslDirection[i]);
+            vec3 d = normalize(slDirection[i]);
+            float dotFromDirection = dot(l,-d);
+
+            if (dotFromDirection >= slLimit[i]) 
+            {
+                vec3 lightdir = l;
+                vec3 r = normalize(-reflect(lightdir,vfragNormal));
+                vec3 v = normalize(v_surfaceToView);
+
+                vec3 ambient = lAmbient[i];
+                vec3 diffuse = lDiffuse[i] * max(dot(vfragNormal, lightdir),0.0);
+                diffuse = clamp(diffuse, 0.0, 1.0);
+
+                vec3 specular = lSpecular[i] * pow(max(dot(r,v),0.0), 300.0);
+                specular = clamp(specular, 0.0, 1.0);
+
+                fragColor.rgb += fragColor.rgb * (ambient + diffuse);
+                fragColor.rgb += specular;
+            }
+
+        }
+    }
+
+
 }

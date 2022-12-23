@@ -57,8 +57,8 @@ class Main {
         this.bidirectProgram = programBuilder.buildProgram(vertexShader, bidirectShader);
         
         
-        this.program = this.toonProgram;
-        //this.program = this.phongProgram;
+        //this.program = this.toonProgram;
+        this.program = this.phongProgram;
         //this.program = this.bidirectProgram;
         this.gl.useProgram(this.program.program);
         
@@ -117,8 +117,6 @@ class Main {
         this.lightController.add_light_source(ls1);
         this.lightController.add_spotlight_source(spls0);
         this.lightController.add_spotlight_source(spls1);
-        var shininessLocation = this.program.getUniformLocation("u_shininess");
-        this.gl.uniform1f(shininessLocation, 50.0);
         
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
