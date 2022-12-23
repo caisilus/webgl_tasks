@@ -48,10 +48,16 @@ class Main {
     data: {[key:number]: IndexDrawData} = {}; 
     
     select:HTMLSelectElement;
+    directionalCheckBox: HTMLInputElement;
+    pointLightCheckBox: HTMLInputElement;
+    projectorCheckBox: HTMLInputElement;
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas);
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
+        this.directionalCheckBox = document.querySelector("input#directionalCheckbox") as HTMLInputElement;
+        this.pointLightCheckBox = document.querySelector("input#pointLightCheckbox") as HTMLInputElement;
+        this.projectorCheckBox = document.querySelector("input#projectorCheckbox") as HTMLInputElement;
         const programBuilder = new ProgramBuilder(this.gl);
         
         this.phongProgram = programBuilder.buildProgram(vertexShader, phongShader);
@@ -159,6 +165,7 @@ class Main {
     }
 
     update() {
+        // console.log("checkbox data: " + this.activeLightSources());
         Drawer.clearBg(this.gl);
         this.changeProgram(this.phongProgram, this.phongLightController);
         this.grass.draw();
@@ -197,8 +204,12 @@ class Main {
                 throw new Error(`Unknown figure name ${lightMode}`);
             }
         }
-        
     }
+
+    private activeLightSources(): [boolean, boolean, boolean] {    
+        return [this.directionalCheckBox.checked, this.pointLightCheckBox.checked, this.projectorCheckBox.checked]
+    }
+
     private selectedLightMode(): string {
         return this.select.options[this.select.options.selectedIndex].text;
     } 
