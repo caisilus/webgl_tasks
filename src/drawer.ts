@@ -67,7 +67,7 @@ export class Drawer {
     }
 
     drawIndex(drawData: IndexDrawData) {
-        this.clearBg();
+        //this.clearBg();
 
         if (this.indexBufferObject == null) {
             throw new Error("Index buffer not initialized");
@@ -77,7 +77,7 @@ export class Drawer {
     }
 
     drawInstances(drawData: DrawData, numberOfInstances: number) {
-        this.clearBg();
+        //this.clearBg();
         
         if (this.vertexBuffer == null || this.instanceAttributesBuffer == null){
             throw new Error("Vertex or instance buffer is not initialized");
@@ -107,5 +107,10 @@ export class Drawer {
     clearBg(color: [number, number, number] = [0,0, 0]) {
         this.gl.clearColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    }
+
+    static clearBg(gl: WebGL2RenderingContext, color: [number, number, number] = [0,0,0]) {
+        gl.clearColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 }
