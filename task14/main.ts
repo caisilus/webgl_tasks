@@ -59,16 +59,16 @@ class Main {
         this.bidirectProgram = programBuilder.buildProgram(vertexShader, bidirectShader);
         
         
-        this.program = this.toonProgram;
-        //this.program = this.phongProgram;
-        //this.program = this.bidirectProgram;
+        // this.program = this.toonProgram;
+        // this.program = this.phongProgram;
+        this.program = this.bidirectProgram;
         this.gl.useProgram(this.program.program);
         
         this.camera = new Camera(this.gl, this.program);
         this.cameraController = new CameraController(this.gl, this.camera);
         this.camera.setPosition(0, 50, -200);
         
-        this.cat = LoadedObject.fromProgram(this.bidirectProgram, Cat, CatTex);
+        this.cat = LoadedObject.fromProgram(this.toonProgram, Cat, CatTex);
         this.cat.transformator.setdDefaultScaling();
         this.cat.transformator.translate(0, 10, 0);
         this.cat.transformator.rotate([270, 0, 180]);
@@ -78,7 +78,7 @@ class Main {
         this.grass.transformator.setDefaultTranslation();
         this.grass.transformator.rotate([270, 0, 0]);
 
-        this.gun = LoadedObject.fromProgram(this.toonProgram, Gun, GunTex);
+        this.gun = LoadedObject.fromProgram(this.bidirectProgram, Gun, GunTex);
         this.gun.transformator.translate(0.19, 0.47, 0);
         this.gun.transformator.scale(50, 50, 50);
         this.gun.transformator.rotate([0, 270, 0]);
@@ -114,16 +114,19 @@ class Main {
             [1,1,1], // lightSpecular
         );
         
+        this.gl.useProgram(this.phongProgram.program);
         this.phongLightController = new LightController(this.gl, this.phongProgram, "directional", ls0)
         this.phongLightController.add_light_source(ls1);
         this.phongLightController.add_spotlight_source(spls0);
         this.phongLightController.add_spotlight_source(spls1);
         
+        this.gl.useProgram(this.toonProgram.program);
         this.toonLightController = new LightController(this.gl, this.toonProgram, "directional", ls0)
         this.toonLightController.add_light_source(ls1);
         this.toonLightController.add_spotlight_source(spls0);
         this.toonLightController.add_spotlight_source(spls1);
 
+        this.gl.useProgram(this.bidirectProgram.program);
         this.bidirectionalLightController = new LightController(this.gl, this.bidirectProgram, "directional", ls0)
         this.bidirectionalLightController.add_light_source(ls1);
         this.bidirectionalLightController.add_spotlight_source(spls0);
@@ -159,9 +162,9 @@ class Main {
         Drawer.clearBg(this.gl);
         this.changeProgram(this.phongProgram, this.phongLightController);
         this.grass.draw();
-        this.changeProgram(this.bidirectProgram, this.bidirectionalLightController);
-        this.cat.draw();
         this.changeProgram(this.toonProgram, this.toonLightController);
+        this.cat.draw();
+        this.changeProgram(this.bidirectProgram, this.bidirectionalLightController);
         this.gun.draw();
         requestAnimationFrame(() => {this.update()});
     }
