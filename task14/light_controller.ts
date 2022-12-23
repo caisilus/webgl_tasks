@@ -56,38 +56,38 @@ export class LightController {
         this.spotlightsSources = [];
 
         //Параметры глобального источника света
-        this.globalLightDirectionLocation = program.getUniformLocation("globalLightDirection");
+        this.globalLightDirectionLocation = this.program.getUniformLocation("globalLightDirection");
         this.gl.uniform3fv(this.globalLightDirectionLocation, this.globalLightDirection)
-        this.globalLightAmbientLocation = program.getUniformLocation("globalLightAmbient");
+        this.globalLightAmbientLocation = this.program.getUniformLocation("globalLightAmbient");
         this.gl.uniform3fv(this.globalLightAmbientLocation, this.globalLightAmbient)
-        this.globalLightDiffuseLocation = program.getUniformLocation("globalLightDiffuse");
+        this.globalLightDiffuseLocation = this.program.getUniformLocation("globalLightDiffuse");
         this.gl.uniform3fv(this.globalLightDiffuseLocation, this.globalLightDiffuse)
-        this.globalLightSpecularLocation = program.getUniformLocation("globalLightSpecular");
+        this.globalLightSpecularLocation = this.program.getUniformLocation("globalLightSpecular");
         this.gl.uniform3fv(this.globalLightSpecularLocation, this.globalLightSpecular)
 
 
         //Параметры точечных источников света
-        this.lightSourcesNumLocation = program.getUniformLocation("num_lights");
-        this.lightSourcesNumLocationFrag = program.getUniformLocation("num_lightsF");
-        this.lightPostionLocation = program.getUniformLocation("lPosition");
+        this.lightSourcesNumLocation = this.program.getUniformLocation("num_lights");
+        this.lightSourcesNumLocationFrag = this.program.getUniformLocation("num_lightsF");
+        this.lightPostionLocation = this.program.getUniformLocation("lPosition");
         this.lAmbient = this.program.getUniformLocation("lAmbient");
         this.lDuffuse = this.program.getUniformLocation("lDiffuse");
         this.lSpecular = this.program.getUniformLocation("lSpecular");
 
         //Параметры проецирующих источников света
-        this.spotlightSourcesNumLocation = program.getUniformLocation("num_spotlights");
-        this.spotlightSourcesNumLocationFrag = program.getUniformLocation("num_spotlightsF");
-        this.spotlightLimitLocation = program.getUniformLocation("slLimit");
-        this.spotlightPositionLocation = program.getUniformLocation("slPosition");
-        this.spotlightDirectionLocation = program.getUniformLocation("slDirection");
-        this.spotlightAmbientLocation = program.getUniformLocation("slAmbient");
-        this.spotlightDiffuseLocation = program.getUniformLocation("slDiffuse");
-        this.spotlightSpecularLocation = program.getUniformLocation("slSpecular");
+        this.spotlightSourcesNumLocation = this.program.getUniformLocation("num_spotlights");
+        this.spotlightSourcesNumLocationFrag = this.program.getUniformLocation("num_spotlightsF");
+        this.spotlightLimitLocation = this.program.getUniformLocation("slLimit");
+        this.spotlightPositionLocation = this.program.getUniformLocation("slPosition");
+        this.spotlightDirectionLocation = this.program.getUniformLocation("slDirection");
+        this.spotlightAmbientLocation = this.program.getUniformLocation("slAmbient");
+        this.spotlightDiffuseLocation = this.program.getUniformLocation("slDiffuse");
+        this.spotlightSpecularLocation = this.program.getUniformLocation("slSpecular");
 
         //Режимы источников света
-        this.GlobalLightEnabledLocation = program.getUniformLocation("globalLight");
-        this.PointLightEnabledLocation = program.getUniformLocation("pointLight");
-        this.ProjLightEnabledLocation = program.getUniformLocation("spotLight");
+        this.GlobalLightEnabledLocation = this.program.getUniformLocation("globalLight");
+        this.PointLightEnabledLocation = this.program.getUniformLocation("pointLight");
+        this.ProjLightEnabledLocation = this.program.getUniformLocation("spotLight");
         this.switch_mode(lm);
         this.add_light_source(ls);
     }
