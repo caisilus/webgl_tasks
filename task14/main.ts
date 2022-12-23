@@ -29,10 +29,10 @@ class Main {
     phongProgram: ShaderProgram;
     toonProgram: ShaderProgram;
     program: ShaderProgram;
-    drawer: Drawer;
     camera: Camera;
     cameraController: CameraController;
     cat: LoadedObject;
+    turkey: LoadedObject;
     lightController: LightController;
     textures: {[key:number]: Texture} = {};
     data: {[key:number]: IndexDrawData} = {}; 
@@ -53,14 +53,18 @@ class Main {
         this.program = this.phongProgram;
         this.gl.useProgram(this.program.program);
         
-        this.drawer = new Drawer(this.gl, this.program);
-        
         this.camera = new Camera(this.gl, this.program);
         this.cameraController = new CameraController(this.gl, this.camera);
         this.camera.setPosition(0, 10, -100);
         
+
         // this.textureController = new TextureController(this.gl, this.program);
-        this.cat = new LoadedObject(this.drawer, Cat, CatTex);
+        this.changeProgram(this.toonProgram);
+        this.cat = LoadedObject.fromProgram(this.program, Cat, CatTex);
+
+        // this.changeProgram(this.phongProgram);
+        this.turkey = LoadedObject.fromProgram(this.program, CoockedTurkey, CoockedTexture);
+        this.changeProgram(this.toonProgram);
 
         this.select = document.querySelector("select#selectFigure") as HTMLSelectElement;
         let ls = new LightSource(new Float32Array([-20, 50, -20]),new Float32Array([0.2,0.2,0.2]),new Float32Array([1.0,1.0,1.0]),new Float32Array([1.0,1.0,1.0]),new Float32Array([0.5,0.5,0.5]));
@@ -126,13 +130,20 @@ class Main {
     }
 
     update() {
-        this.drawer.clearBg();
+        Drawer.clearBg(this.gl);
         
+        this.changeProgram(this.toonProgram);
         this.cat.transformator.rotate([-90 + performance.now() / 1000.0 * 0,
         0,
         0 + performance.now() / 5 / 1000.0 * 60]);
         this.cat.draw();
         requestAnimationFrame(() => {this.update()});
+    }
+
+    changeProgram(newProgram: ShaderProgram) {
+        this.program = newProgram;
+        this.gl.useProgram(this.program.program);
+        this.camera.changeProgram(newProgram);
     }
 
     onSelectChange(event: Event) {
@@ -160,9 +171,10 @@ class Main {
     private selectedLightMode(): string {
         return this.select.options[this.select.options.selectedIndex].text;
     } 
+    
     private degToRad(d:number) {
         return d * Math.PI/180;
-      }
+    }
 }
 
 function main(){

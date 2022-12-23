@@ -162,5 +162,6 @@ export class Camera{
     public changeProgram(program: ShaderProgram) {
         this.gl.useProgram(program.program);
         this.matCameraUniformLocation = program.getUniformLocation("mCamera");
+        this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
     }
 }

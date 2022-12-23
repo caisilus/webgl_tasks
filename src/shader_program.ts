@@ -5,7 +5,7 @@ interface HashMap<V> {
 }
 
 export class ShaderProgram {
-    private gl: WebGL2RenderingContext;
+    public readonly gl: WebGL2RenderingContext;
     private linked: boolean
     private cachedUniformLocations: HashMap<WebGLUniformLocation> = {};
     readonly program: WebGLProgram;
