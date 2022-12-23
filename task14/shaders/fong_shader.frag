@@ -44,7 +44,7 @@ void main()
         vec3 diffuse = globalLightDiffuse * max(dot(vfragNormal, lightdir),0.0);
         diffuse = clamp(diffuse, 0.0, 1.0);
 
-        vec3 specular = globalLightSpecular * pow(max(dot(r,v),0.0), 300.0);
+        vec3 specular = globalLightSpecular * pow(max(dot(r,v),0.0), 10.0);
         specular = clamp(specular, 0.0, 1.0);
 
         fragColor.rgb *= (ambient + diffuse);

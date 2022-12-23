@@ -165,9 +165,10 @@ class Main {
     }
 
     update() {
-        // console.log("checkbox data: " + this.activeLightSources());
+        console.log("checkbox data: " + this.activeLightSources());
         Drawer.clearBg(this.gl);
         this.changeProgram(this.phongProgram, this.phongLightController);
+        
         this.grass.draw();
         this.changeProgram(this.toonProgram, this.toonLightController);
         this.cat.draw();
@@ -181,7 +182,8 @@ class Main {
         this.gl.useProgram(this.program.program);
         this.camera.changeProgram(newProgram);
         this.lightController = lightController;
-        this.onSelectChange();
+        this.lightController.set_active_lights(this.activeLightSources());
+        // this.onSelectChange();
     }
 
     onSelectChange(event?: Event) {
@@ -207,7 +209,9 @@ class Main {
     }
 
     private activeLightSources(): [boolean, boolean, boolean] {    
-        return [this.directionalCheckBox.checked, this.pointLightCheckBox.checked, this.projectorCheckBox.checked]
+        return [this.directionalCheckBox.checked, 
+                this.pointLightCheckBox.checked, 
+                this.projectorCheckBox.checked]
     }
 
     private selectedLightMode(): string {

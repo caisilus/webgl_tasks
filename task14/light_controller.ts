@@ -10,9 +10,9 @@ export class LightController {
     gl: WebGL2RenderingContext;
     //Направление глобального света
     globalLightDirection: number[] = [0.0,0.5,0.0];
-    globalLightAmbient: number[] = [0.0,0.5,0.0];
+    globalLightAmbient: number[] = [0.1,0.1,0.1];
     globalLightDiffuse: number[] = [0.5,0.5,0.5];
-    globalLightSpecular: number[] = [0.5,0.5,0.5];
+    globalLightSpecular: number[] = [0.9,0.9,0.9];
 
     //Параметры точечных источников света
     lightSourcesNumLocation : WebGLUniformLocation | null;
@@ -197,6 +197,15 @@ export class LightController {
         this.gl.uniform3fv(this.spotlightSpecularLocation, slspecular);
     }
 
+
+    set_active_lights(flags: [boolean, boolean, boolean]) {
+        let global = flags[0] ? 1 : 0;
+        let point = flags[1] ? 1 : 0;
+        let proj = flags[2] ? 1 : 0;
+        this.gl.uniform1i(this.GlobalLightEnabledLocation, global);
+        this.gl.uniform1i(this.PointLightEnabledLocation, point);
+        this.gl.uniform1i(this.ProjLightEnabledLocation, proj);
+    }
 
     switch_mode(new_mode:string){
         this.currentMode = new_mode;
