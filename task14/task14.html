@@ -8,6 +8,10 @@
                 display: block;
                 width: 800px;
             }
+            .checkbox-container {
+                display: flex;
+                flex-direction: row;
+            }
         </style>
         <script src="./main.ts" type="module"></script>
     </head>
@@ -16,10 +20,13 @@
         <br><br>
         <canvas id="mycanvas" width="800" height="600"></canvas>
         <p>Вид освещения</p>
-        <select id="selectFigure">
-            <option>Направленное</option>
-            <option>Точечное</option>
-            <option>Прожектор</option>>
-        </select>
+        <div class="checkbox-container">
+            <p>Направленное</p>
+            <input type="checkbox" id="directionalCheckbox" checked></input>
+            <p>Точечное</p>
+            <input type="checkbox" id="pointlightCheckbox"></input>
+            <p>Прожектор</p>
+            <input type="checkbox" id="projectorCheckbox"></input>
+        </div>
     </body>
 </html>

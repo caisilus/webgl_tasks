@@ -5,7 +5,7 @@ export class CameraController{
     camera: Camera;
     canvas: HTMLCanvasElement;
     cameraMoveSpeed: number = 10;
-    cameraRotationSpeed: number = 0.1;
+    cameraRotationSpeed: number = 10;
 
 
     drag: boolean = false;
@@ -52,8 +52,8 @@ export class CameraController{
             let mouseVec = vec2.subtract(vec2.create(),this.endMousePosition, this.startMousePosition);
             
             this.camera.pitch = this.oldAngels[0] - (mouseVec[1] / this.canvas.clientWidth) * this.cameraRotationSpeed;
-            if(this.camera.pitch > 180) this.camera.pitch = 180;
-            if(this.camera.pitch < -180) this.camera.pitch = -180;
+            if(this.camera.pitch > 180) this.camera.pitch -= 360;
+            if(this.camera.pitch < -180) this.camera.pitch += 360;
         
             this.camera.yaw = this.oldAngels[1] - (mouseVec[0]/ this.canvas.clientHeight) * this.cameraRotationSpeed;
             if(this.camera.yaw > 89) this.camera.yaw = 89;

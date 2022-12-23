@@ -50,7 +50,7 @@ void main()
         vec3 diffuse = globalLightDiffuse * max(dot(vfragNormal, lightdir),0.0);
         diffuse = clamp(diffuse, 0.0, 1.0);
 
-        vec3 specular = globalLightSpecular * pow(max(dot(r,v),0.0), 300.0);
+        vec3 specular = globalLightSpecular * pow(max(dot(r,v),0.0), 10.0);
         specular = clamp(specular, 0.0, 1.0);
 
         fragColor.rgb *= (ambient + diffuse);
@@ -59,6 +59,8 @@ void main()
 
     if (pointLight)
     {
+        vec3 amdiff = vec3(0.0, 0.0, 0.0);
+        vec3 spec = vec3(0.0, 0.0, 0.0);
         for (int i = 0; i < num_lightsF; i++)
         {
             vec3 lightdir = normalize(tolDirection[i]);
@@ -68,17 +70,19 @@ void main()
             vec3 ambient = lAmbient[i];
             vec3 diffuse = lDiffuse[i] * max(dot(vfragNormal, lightdir),0.0);
             diffuse = clamp(diffuse, 0.0, 1.0);
-
             vec3 specular = lSpecular[i] * pow(max(dot(r,v),0.0), 300.0);
             specular = clamp(specular, 0.0, 1.0);
 
-            fragColor.rgb += fragColor.rgb * (ambient + diffuse);
-            fragColor.rgb += specular;
+            amdiff += fragColor.rgb * (ambient + diffuse);
+            spec += specular;
         }
+        fragColor.rgb += amdiff + spec;
     }
 
     if (spotLight)
     {
+        vec3 amdiff = vec3(0.0, 0.0, 0.0);
+        vec3 spec = vec3(0.0, 0.0, 0.0);
         for (int i = 0; i < num_spotlightsF; i++)
         {
             vec3 l = normalize(toslDirection[i]);
@@ -97,10 +101,11 @@ void main()
 
                 vec3 specular = lSpecular[i] * pow(max(dot(r,v),0.0), 300.0);
                 specular = clamp(specular, 0.0, 1.0);
-
-                fragColor.rgb += fragColor.rgb * (ambient + diffuse);
-                fragColor.rgb += specular;
+                
+                amdiff += fragColor.rgb * (ambient + diffuse);
+                spec += specular;
             }
+            fragColor.rgb += amdiff + spec;
 
         }
     }

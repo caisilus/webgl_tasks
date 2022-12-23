@@ -4,6 +4,7 @@ import {Drawer} from "../src/drawer";
 import {Loader} from "../src/obj_loader";
 import {Texture} from "../src/texture";
 import {TextureController} from "../src/texture_controller";
+import { ShaderProgram } from "./shader_program";
 
 export class LoadedObject extends Object3D {
     private loader: Loader;
@@ -16,6 +17,11 @@ export class LoadedObject extends Object3D {
         this.loader = new Loader(this.gl);
         this.texture = null;
         this.loadData();
+    }
+
+    public static fromProgram(program: ShaderProgram, modelUrl: string, textureUrl: string | null = null): LoadedObject {
+        const drawer = new Drawer(program.gl, program);
+        return new LoadedObject(drawer, modelUrl, textureUrl);
     }
 
     private loadModel(url: string) : Promise<IndexDrawData> {

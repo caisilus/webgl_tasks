@@ -66,7 +66,17 @@ export class Camera{
     }
 
     private setUpView() {
-        mat4.lookAt(this.matView, this.cameraPosition, this.cameraTarget, this.cameraUp);
+        let iden = mat4.create();
+        mat4.identity(iden);
+        let invertpos = vec3.fromValues(
+            -this.cameraPosition[0],
+            -this.cameraPosition[1],
+            -this.cameraPosition[2]
+        )
+        mat4.rotateX(this.matView, iden, glMatrix.toRadian(this.pitch));
+        mat4.rotateY(this.matView, this.matView, glMatrix.toRadian(180 + this.yaw));
+        mat4.translate(this.matView, this.matView, invertpos);
+        console.log("pitch:" + this.pitch);
     }
 
     private setUpProjection() {
@@ -92,11 +102,10 @@ export class Camera{
         this.setUpView();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
-        this.countDirection();
+        //this.countDirection();
     }
 
     public moveForward(d: number){
-        //this.countDirection();
         console.log("dir:" + this.cameraDirection);
         this.cameraPosition[0] += this.cameraDirection[0] * d;
         this.cameraPosition[1] += this.cameraDirection[1] * d;
@@ -108,7 +117,7 @@ export class Camera{
         this.setUpView();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
-        this.countDirection();
+        //this.countDirection();
     }
 
     public moveRight(d: number){
@@ -127,7 +136,7 @@ export class Camera{
         this.setUpView();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
-        this.countDirection();
+        //this.countDirection();
     }
 
     public moveUp(d: number){
@@ -143,17 +152,18 @@ export class Camera{
         this.setUpView();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
-        this.countDirection();
+        //this.countDirection();
     }
 
     public rotateCamera() {
-        this.coutDiection(this.pitch, this.yaw)
-
-        this.cameraTarget[0] = this.cameraPosition[0] + this.cameraDirection[0];
-        this.cameraTarget[1] = this.cameraPosition[1] + this.cameraDirection[1];
-        this.cameraTarget[2] = this.cameraPosition[2] + this.cameraDirection[2];
-
         this.setUpView();
+        // this.coutDiection(this.pitch, this.yaw)
+
+        // this.cameraTarget[0] = this.cameraPosition[0] + this.cameraDirection[0];
+        // this.cameraTarget[1] = this.cameraPosition[1] + this.cameraDirection[1];
+        // this.cameraTarget[2] = this.cameraPosition[2] + this.cameraDirection[2];
+
+        // this.setUpView();
         mat4.multiply(this.matCamera, this.matProj, this.matView);
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
     }
@@ -164,6 +174,8 @@ export class Camera{
 
     public changeProgram(program: ShaderProgram) {
         this.gl.useProgram(program.program);
+        this.camPositionLocation = program.getUniformLocation("camPosition");
         this.matCameraUniformLocation = program.getUniformLocation("mCamera");
+        this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
     }
 }
