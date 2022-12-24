@@ -84,7 +84,7 @@ class Main {
         this.cat.transformator.translate(0, 10, 0);
         this.cat.transformator.rotate([270, 0, 180]);
 
-        this.grass = LoadedObject.fromProgram(this.phongProgram, Grass, GrassTex);
+        this.grass = LoadedObject.fromProgram(this.toonProgram, Grass, GrassTex);
         this.grass.transformator.setdDefaultScaling();
         this.grass.transformator.setDefaultTranslation();
         this.grass.transformator.rotate([270, 0, 0]);
@@ -105,28 +105,32 @@ class Main {
         this.turkey.transformator.rotate([-90, 0, 70]);
 
         let ls0 = new LightSource(
-            [0, 50, 500], // lightPosition
+            this.gl,
+            [0, 200, 0], // lightPosition
             [0.2,0.0,0.0], // lightAmbient
-            [0.2,0.2,0.2], // lightDiffuse
+            [1,1,1], // lightDiffuse
             [1,1,1], // lightSpecular
         );
         let ls1 = new LightSource(
+            this.gl,
             [-500, -500, 0], // lightPosition
             [0.0,0.0,0.2], // lightAmbient
             [0.2,0.2,0.2], // lightDiffuse
             [1,1,1], // lightSpecular
         );
 
-        let spls0 = new SpotLightSource(            
+        let spls0 = new SpotLightSource( 
+            this.gl,       
             [0, 200, 0], // lightPosition
             [0, 0, 0], // lightTarget
-            20, //lightLimit
-            [0.2,0.0,0.0], // lightAmbient
-            [0.2,0.2,0.2], // lightDiffuse
+            10, //lightLimit
+            [0.2,0.2,0.2], // lightAmbient
+            [1,1,1], // lightDiffuse
             [1,1,1], // lightSpecular
         );
 
-        let spls1 = new SpotLightSource(            
+        let spls1 = new SpotLightSource(
+            this.gl,          
             [0, 50, -200], // lightPosition
             [0, 50, 0], // lightTarget
             5, //lightLimit
@@ -139,19 +143,19 @@ class Main {
         this.phongLightController = new LightController(this.gl, this.phongProgram, "directional", ls0)
         this.phongLightController.add_light_source(ls1);
         this.phongLightController.add_spotlight_source(spls0);
-        this.phongLightController.add_spotlight_source(spls1);
+        //this.phongLightController.add_spotlight_source(spls1);
         
         this.gl.useProgram(this.toonProgram.program);
         this.toonLightController = new LightController(this.gl, this.toonProgram, "directional", ls0)
         this.toonLightController.add_light_source(ls1);
         this.toonLightController.add_spotlight_source(spls0);
-        this.toonLightController.add_spotlight_source(spls1);
+        //this.toonLightController.add_spotlight_source(spls1);
 
         this.gl.useProgram(this.bidirectProgram.program);
         this.bidirectionalLightController = new LightController(this.gl, this.bidirectProgram, "directional", ls0)
         this.bidirectionalLightController.add_light_source(ls1);
         this.bidirectionalLightController.add_spotlight_source(spls0);
-        this.bidirectionalLightController.add_spotlight_source(spls1);
+        //this.bidirectionalLightController.add_spotlight_source(spls1);
 
         this.lightController = this.phongLightController;
         
@@ -183,11 +187,12 @@ class Main {
         Drawer.clearBg(this.gl);
         this.changeProgram(this.phongProgram, this.phongLightController);
         this.turkey.draw();
-        this.grass.draw();
+        
         
         this.changeProgram(this.toonProgram, this.toonLightController);
         this.cat.draw();
         this.span.draw();
+        this.grass.draw();
         
         this.changeProgram(this.bidirectProgram, this.bidirectionalLightController);
         this.gun.draw();
@@ -200,7 +205,6 @@ class Main {
         this.camera.changeProgram(newProgram);
         this.lightController = lightController;
         this.lightController.set_active_lights(this.activeLightSources());
-        // this.onSelectChange();
     }
 
     onSelectChange(event?: Event) {

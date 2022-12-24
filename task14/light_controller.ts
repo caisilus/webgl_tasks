@@ -18,10 +18,6 @@ export class LightController {
     lightSourcesNumLocation : WebGLUniformLocation | null;
     lightSourcesNumLocationFrag : WebGLUniformLocation | null;
 
-    lightPostionLocation: WebGLUniformLocation | null;
-    lAmbient: WebGLUniformLocation | null;
-    lDuffuse: WebGLUniformLocation | null;
-    lSpecular: WebGLUniformLocation | null;
 
     //Параметры глобального источника света
     globalLightDirectionLocation: WebGLUniformLocation | null;
@@ -32,14 +28,6 @@ export class LightController {
     //Параметры проецирующих источников света
     spotlightSourcesNumLocation: WebGLUniformLocation | null;
     spotlightSourcesNumLocationFrag: WebGLUniformLocation | null;
-
-    spotlightPositionLocation: WebGLUniformLocation | null;
-    spotlightDirectionLocation: WebGLUniformLocation | null;
-
-    spotlightLimitLocation: WebGLUniformLocation | null;
-    spotlightAmbientLocation: WebGLUniformLocation | null;
-    spotlightDiffuseLocation: WebGLUniformLocation | null;
-    spotlightSpecularLocation: WebGLUniformLocation | null;
 
     //Режимы источников света
     GlobalLightEnabledLocation: WebGLUniformLocation | null;
@@ -69,20 +57,10 @@ export class LightController {
         //Параметры точечных источников света
         this.lightSourcesNumLocation = this.program.getUniformLocation("num_lights");
         this.lightSourcesNumLocationFrag = this.program.getUniformLocation("num_lightsF");
-        this.lightPostionLocation = this.program.getUniformLocation("lPosition");
-        this.lAmbient = this.program.getUniformLocation("lAmbient");
-        this.lDuffuse = this.program.getUniformLocation("lDiffuse");
-        this.lSpecular = this.program.getUniformLocation("lSpecular");
 
         //Параметры проецирующих источников света
         this.spotlightSourcesNumLocation = this.program.getUniformLocation("num_spotlights");
         this.spotlightSourcesNumLocationFrag = this.program.getUniformLocation("num_spotlightsF");
-        this.spotlightLimitLocation = this.program.getUniformLocation("slLimit");
-        this.spotlightPositionLocation = this.program.getUniformLocation("slPosition");
-        this.spotlightDirectionLocation = this.program.getUniformLocation("slDirection");
-        this.spotlightAmbientLocation = this.program.getUniformLocation("slAmbient");
-        this.spotlightDiffuseLocation = this.program.getUniformLocation("slDiffuse");
-        this.spotlightSpecularLocation = this.program.getUniformLocation("slSpecular");
 
         //Режимы источников света
         this.GlobalLightEnabledLocation = this.program.getUniformLocation("globalLight");
@@ -93,108 +71,23 @@ export class LightController {
     }
 
     add_light_source(ls: LightSource) {
+        //Привязываем источник света к шейдеру
+        ls.bind_to_shader(this.program, this.lightSources.length);
         this.lightSources.push(ls);
 
         //Передаём количество источников света в шейдер
         this.gl.uniform1i(this.lightSourcesNumLocation, this.lightSources.length);
         this.gl.uniform1i(this.lightSourcesNumLocationFrag, this.lightSources.length);
-        console.log(this.lightSources.length);
-        //Передаём позиции источников света в шейдер
-        let lpos = []
-        for (let i = 0; i < this.lightSources.length; i++) {
-            lpos.push(this.lightSources[i].lightPosition[0]);
-            lpos.push(this.lightSources[i].lightPosition[1]);
-            lpos.push(this.lightSources[i].lightPosition[2]);
-        }
-        this.gl.uniform3fv(this.lightPostionLocation, lpos);
-
-        //Передаём параметры источников света в шейдер
-        let lambient = []
-        for (let i = 0; i < this.lightSources.length; i++) {
-            lambient.push(this.lightSources[i].lightAmbient[0]);
-            lambient.push(this.lightSources[i].lightAmbient[1]);
-            lambient.push(this.lightSources[i].lightAmbient[2]);
-        }
-        this.gl.uniform3fv(this.lAmbient, lambient);
-
-        let ldiffuse = []
-        for (let i = 0; i < this.lightSources.length; i++) {
-            ldiffuse.push(this.lightSources[i].lightDiffuse[0]);
-            ldiffuse.push(this.lightSources[i].lightDiffuse[1]);
-            ldiffuse.push(this.lightSources[i].lightDiffuse[2]);
-        }
-        this.gl.uniform3fv(this.lDuffuse, ldiffuse);
-
-        let lspecular = []
-        for (let i = 0; i < this.lightSources.length; i++) {
-            lspecular.push(this.lightSources[i].lightSpecular[0]);
-            lspecular.push(this.lightSources[i].lightSpecular[1]);
-            lspecular.push(this.lightSources[i].lightSpecular[2]);
-        }
-        this.gl.uniform3fv(this.lSpecular, lspecular);
     }
 
     add_spotlight_source(sls: SpotLightSource) {
+        //Привязываем источник света к шейдеру
+        sls.bind_to_shader(this.program, this.spotlightsSources.length);
         this.spotlightsSources.push(sls);
 
         //Передаём количество источников света в шейдер
         this.gl.uniform1i(this.spotlightSourcesNumLocation, this.spotlightsSources.length);
         this.gl.uniform1i(this.spotlightSourcesNumLocationFrag, this.spotlightsSources.length);
-
-        //Передаём лимиты источников света в шейдер
-        let slimit = []
-        for (let i = 0; i < this.spotlightsSources.length; i++) {
-            let radlimit = this.spotlightsSources[i].lightlimit * Math.PI / 180
-            slimit.push(Math.cos(radlimit));
-        }
-        this.gl.uniform1fv(this.spotlightLimitLocation, slimit);
-
-        //Передаём позиции источников света в шейдер
-        let slpos = []
-        for (let i = 0; i < this.spotlightsSources.length; i++) {
-            slpos.push(this.spotlightsSources[i].lightPosition[0]);
-            slpos.push(this.spotlightsSources[i].lightPosition[1]);
-            slpos.push(this.spotlightsSources[i].lightPosition[2]);
-        }
-        this.gl.uniform3fv(this.spotlightPositionLocation, slpos);
-
-        //Передаём направления источников света в шейдер
-        let slDir = []
-        for (let i = 0; i < this.spotlightsSources.length; i++) {
-            let sldir = []
-            sldir[0] = this.spotlightsSources[i].lightTarget[0] - this.spotlightsSources[i].lightPosition[0];
-            sldir[1] = this.spotlightsSources[i].lightTarget[1] - this.spotlightsSources[i].lightPosition[1];
-            sldir[2] = this.spotlightsSources[i].lightTarget[2] - this.spotlightsSources[i].lightPosition[2];
-            slDir.push(sldir[0]);
-            slDir.push(sldir[1]);
-            slDir.push(sldir[2]);
-        }
-        this.gl.uniform3fv(this.spotlightDirectionLocation, slDir);
-
-        //Передаём параметры источников света в шейдер
-        let slambient = []
-        for (let i = 0; i < this.spotlightsSources.length; i++) {
-            slambient.push(this.spotlightsSources[i].lightAmbient[0]);
-            slambient.push(this.spotlightsSources[i].lightAmbient[1]);
-            slambient.push(this.spotlightsSources[i].lightAmbient[2]);
-        }
-        this.gl.uniform3fv(this.spotlightAmbientLocation, slambient);
-
-        let sldiffuse = []
-        for (let i = 0; i < this.spotlightsSources.length; i++) {
-            sldiffuse.push(this.spotlightsSources[i].lightDiffuse[0]);
-            sldiffuse.push(this.spotlightsSources[i].lightDiffuse[1]);
-            sldiffuse.push(this.spotlightsSources[i].lightDiffuse[2]);
-        }
-        this.gl.uniform3fv(this.spotlightDiffuseLocation, sldiffuse);
-
-        let slspecular = []
-        for (let i = 0; i < this.spotlightsSources.length; i++) {
-            slspecular.push(this.spotlightsSources[i].lightSpecular[0]);
-            slspecular.push(this.spotlightsSources[i].lightSpecular[1]);
-            slspecular.push(this.spotlightsSources[i].lightSpecular[2]);
-        }
-        this.gl.uniform3fv(this.spotlightSpecularLocation, slspecular);
     }
 
 
