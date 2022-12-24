@@ -56,7 +56,7 @@ class Main {
         this.tank.transformator.translate(0, 0, 0);
         this.tank.transformator.rotate([0, 90, 0]);
 
-        this.tankController = new TankController(this.tank.transformator);
+        this.tankController = new TankController(this.tank.transformator, [0, 90, 0]);
         
         this.grass = new LoadedObject(this.drawer, FieldModel, FieldTexture);
         this.grass.transformator.scale(2, 1, 2);

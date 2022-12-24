@@ -1,4 +1,4 @@
-import { glMatrix, mat4 } from "gl-matrix";
+import { glMatrix, mat3, mat4, vec3 } from "gl-matrix";
 import { ShaderProgram } from "./shader_program";
 
 export class Transformator{
@@ -13,7 +13,8 @@ export class Transformator{
     private scalingMatrix: Float32Array = new Float32Array(16);
     private rotateMatrix: Float32Array = new Float32Array(16);
 
-    readonly forward: [number, number, number];
+    private initialForward: [number, number, number];
+    forward: [number, number, number];
 
     constructor(readonly gl: WebGL2RenderingContext, readonly program: ShaderProgram) {
         this.gl = gl;
@@ -27,7 +28,8 @@ export class Transformator{
         mat4.identity(this.rotateMatrix);
         gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     
-        this.forward = [0, 0, 1];
+        this.initialForward = [-1, 0, 0];
+        this.forward = this.initialForward;
     }
 
     rotate(angle: [number, number, number]) {
@@ -37,7 +39,16 @@ export class Transformator{
         var rotateXYMatrix = new Float32Array(16);
         mat4.mul(rotateXYMatrix, this.xRotationMatrix, this.yRotationMatrix);
         mat4.mul(this.rotateMatrix, rotateXYMatrix, this.zRotationMatrix);
+        this.updateForward();
         this.buildWorldMatrix();
+    }
+
+    updateForward() {
+        let newForward = vec3.fromValues(this.initialForward[0], 
+                                         this.initialForward[1], 
+                                         this.initialForward[2]);
+        vec3.transformMat4(newForward, newForward, this.rotateMatrix);
+        this.forward = [newForward[0], newForward[1], newForward[2]];
     }
 
     private rotateX(angle: number) {
