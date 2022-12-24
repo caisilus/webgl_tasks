@@ -1,4 +1,4 @@
-import { ShaderProgram } from "../src/shader_program";
+import { ShaderProgram } from "./shader_program";
 
 export class SpotLightSource{
     gl: WebGL2RenderingContext;

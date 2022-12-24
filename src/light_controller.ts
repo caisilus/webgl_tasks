@@ -1,6 +1,6 @@
 import { vec3 } from "gl-matrix";
 import { LightSource } from "./light_source";
-import { ShaderProgram } from "../src/shader_program";
+import { ShaderProgram } from "./shader_program";
 import { SpotLightSource } from "./spot_light_source";
 
 export class LightController {
@@ -11,7 +11,7 @@ export class LightController {
     //Направление глобального света
     globalLightDirection: number[] = [0.0,1,0.0];
     globalLightAmbient: number[] = [0.1,0.1,0.1];
-    globalLightDiffuse: number[] = [0.7,0.7,0.7];
+    globalLightDiffuse: number[] = [0.8,0.8,0.8];
     globalLightSpecular: number[] = [1.0,1.0,1.0];
 
     //Параметры точечных источников света
@@ -35,9 +35,9 @@ export class LightController {
     ProjLightEnabledLocation: WebGLUniformLocation | null;
 
 
-    constructor(gl: WebGL2RenderingContext, readonly program: ShaderProgram, lm: string, ls:LightSource) {
+    constructor(gl: WebGL2RenderingContext, readonly program: ShaderProgram) {
         this.program = program;
-        this.currentMode = lm;
+        this.currentMode = "directional";
         this.gl = gl;
 
         this.lightSources = [];
@@ -66,8 +66,6 @@ export class LightController {
         this.GlobalLightEnabledLocation = this.program.getUniformLocation("globalLight");
         this.PointLightEnabledLocation = this.program.getUniformLocation("pointLight");
         this.ProjLightEnabledLocation = this.program.getUniformLocation("spotLight");
-        this.switch_mode(lm);
-        this.add_light_source(ls);
     }
 
     add_light_source(ls: LightSource) {

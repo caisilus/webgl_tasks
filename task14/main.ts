@@ -26,9 +26,9 @@ import WoodTex from '../src/images/WoodTex2.jpeg';
 import TurkeyTex from '../src/images/Cooked_Turkey.jpg';
 
 import { Texture } from "../src/texture";
-import { LightController } from "./light_controller";
-import { LightSource } from "./light_source";
-import { SpotLightSource } from "./spot_light_source";
+import { LightController } from "../src/light_controller";
+import { LightSource } from "../src/light_source";
+import { SpotLightSource } from "../src/spot_light_source";
 import { LoadedObject } from "../src/loaded_object";
 
 
@@ -84,7 +84,7 @@ class Main {
         this.cat.transformator.translate(0, 10, 0);
         this.cat.transformator.rotate([270, 0, 180]);
 
-        this.grass = LoadedObject.fromProgram(this.toonProgram, Grass, GrassTex);
+        this.grass = LoadedObject.fromProgram(this.phongProgram, Grass, GrassTex);
         this.grass.transformator.setdDefaultScaling();
         this.grass.transformator.setDefaultTranslation();
         this.grass.transformator.rotate([270, 0, 0]);
@@ -140,19 +140,22 @@ class Main {
         );
         
         this.gl.useProgram(this.phongProgram.program);
-        this.phongLightController = new LightController(this.gl, this.phongProgram, "directional", ls0)
+        this.phongLightController = new LightController(this.gl, this.phongProgram);
+        this.phongLightController.add_light_source(ls0);
         this.phongLightController.add_light_source(ls1);
         this.phongLightController.add_spotlight_source(spls0);
         //this.phongLightController.add_spotlight_source(spls1);
         
         this.gl.useProgram(this.toonProgram.program);
-        this.toonLightController = new LightController(this.gl, this.toonProgram, "directional", ls0)
+        this.toonLightController = new LightController(this.gl, this.toonProgram)
+        this.toonLightController.add_light_source(ls0);
         this.toonLightController.add_light_source(ls1);
         this.toonLightController.add_spotlight_source(spls0);
         //this.toonLightController.add_spotlight_source(spls1);
 
         this.gl.useProgram(this.bidirectProgram.program);
-        this.bidirectionalLightController = new LightController(this.gl, this.bidirectProgram, "directional", ls0)
+        this.bidirectionalLightController = new LightController(this.gl, this.bidirectProgram);
+        this.bidirectionalLightController.add_light_source(ls0);
         this.bidirectionalLightController.add_light_source(ls1);
         this.bidirectionalLightController.add_spotlight_source(spls0);
         //this.bidirectionalLightController.add_spotlight_source(spls1);
@@ -187,12 +190,11 @@ class Main {
         Drawer.clearBg(this.gl);
         this.changeProgram(this.phongProgram, this.phongLightController);
         this.turkey.draw();
-        
+        this.grass.draw();
         
         this.changeProgram(this.toonProgram, this.toonLightController);
         this.cat.draw();
         this.span.draw();
-        this.grass.draw();
         
         this.changeProgram(this.bidirectProgram, this.bidirectionalLightController);
         this.gun.draw();
