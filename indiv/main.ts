@@ -23,14 +23,15 @@ import { LightController } from "../src/light_controller";
 import { LightSource } from "../src/light_source";
 import { SpotLightSource } from "../src/spot_light_source";
 import { LoadedObject } from "../src/loaded_object";
-
+import { TankController } from "./tank_controller";
 
 class Main {
     gl: WebGL2RenderingContext;
     program: ShaderProgram;
     drawer: Drawer;
     camera: Camera;
-    cameraController: CameraController;
+    tankController: TankController;
+    // cameraController: CameraController;
     grass: LoadedObject;
     tank: LoadedObject;
     christmasTree: LoadedObject;
@@ -55,34 +56,16 @@ class Main {
         this.tank.transformator.translate(0, 0, 0);
         this.tank.transformator.rotate([0, 90, 0]);
 
+        this.tankController = new TankController(this.tank.transformator);
+        
         this.grass = new LoadedObject(this.drawer, FieldModel, FieldTexture);
-        // this.grass.transformator.setdDefaultScaling();
         this.grass.transformator.scale(2, 1, 2);
         this.grass.transformator.setDefaultTranslation();
-        // this.grass.transformator.rotate([270, 0, 0]);
 
-        
         this.christmasTree = new LoadedObject(this.drawer, ChristmasTreeModel, ChristmasTreeTexture);
         this.christmasTree.transformator.translate(5, 0, 10);
-        // this.christmasTree.transformator.scale(5, 5, 5);
-        // this.christmasTree.transformator.rotate([0, 210, 0]);
 
         
-        // let ls0 = new LightSource(
-        //     this.gl,
-        //     [0, 200, 0], // lightPosition
-        //     [0.2,0.0,0.0], // lightAmbient
-        //     [1,1,1], // lightDiffuse
-        //     [1,1,1], // lightSpecular
-        // );
-        // let ls1 = new LightSource(
-        //     this.gl,
-        //     [-500, -500, 0], // lightPosition
-        //     [0.0,0.0,0.2], // lightAmbient
-        //     [0.2,0.2,0.2], // lightDiffuse
-        //     [1,1,1], // lightSpecular
-        // );
-
         let spls0 = new SpotLightSource( 
             this.gl,       
             [0, 200, 0], // lightPosition

@@ -13,6 +13,7 @@ export class Transformator{
     private scalingMatrix: Float32Array = new Float32Array(16);
     private rotateMatrix: Float32Array = new Float32Array(16);
 
+    readonly forward: [number, number, number];
 
     constructor(readonly gl: WebGL2RenderingContext, readonly program: ShaderProgram) {
         this.gl = gl;
@@ -25,6 +26,8 @@ export class Transformator{
         mat4.identity(this.scalingMatrix);
         mat4.identity(this.rotateMatrix);
         gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
+    
+        this.forward = [0, 0, 1];
     }
 
     rotate(angle: [number, number, number]) {
@@ -58,6 +61,10 @@ export class Transformator{
     translate(dx: number, dy: number, dz: number) {
         mat4.translate(this.translationMatrix, this.translationMatrix, [dx, dy, dz]);
         this.buildWorldMatrix();
+    }
+
+    moveForward(moveSpeed: number) {
+        this.translate(this.forward[0] * moveSpeed, this.forward[1] * moveSpeed, this.forward[2] * moveSpeed);
     }
 
     scale(dx: number, dy: number, dz: number) {
