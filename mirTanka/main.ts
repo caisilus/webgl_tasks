@@ -26,9 +26,9 @@ import WoodTex from '../src/images/WoodTex2.jpeg';
 import TurkeyTex from '../src/images/Cooked_Turkey.jpg';
 
 import { Texture } from "../src/texture";
-import { LightController } from "./light_controller";
-import { LightSource } from "./light_source";
-import { SpotLightSource } from "./spot_light_source";
+import { LightController } from "../task14/light_controller";
+import { LightSource } from "../task14/light_source";
+import { SpotLightSource } from "../task14/spot_light_source";
 import { LoadedObject } from "../src/loaded_object";
 
 

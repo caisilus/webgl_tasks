@@ -29,6 +29,9 @@ in vec3[10] toslDirection;
 uniform int num_spotlightsF;
 uniform vec3[10] slDirection;
 uniform float[10] slLimit;
+uniform vec3[10] slAmbient;
+uniform vec3[10] slDiffuse;
+uniform vec3[10] slSpecular;
 
 uniform bool globalLight;
 uniform bool pointLight;
@@ -39,6 +42,11 @@ void main()
     vec4 tex_col1 = texture(u_texture1, fragTexCoord);
     fragColor =  mix(tex_col1, vec4(color, 1.0), colorMix);
     vec3 vfragNormal  = normalize(fragNormal);
+
+
+    vec3 sumAmbient = vec3(0.0, 0.0, 0.0);
+    vec3 sumDiffuse = vec3(0.0, 0.0, 0.0);
+    vec3 sumSpecular = vec3(0.0, 0.0, 0.0);
 
     if (globalLight)
     {
@@ -53,8 +61,9 @@ void main()
         vec3 specular = globalLightSpecular * pow(max(dot(r,v),0.0), 10.0);
         specular = clamp(specular, 0.0, 1.0);
 
-        fragColor.rgb *= (ambient + diffuse);
-        fragColor.rgb += specular;
+        sumAmbient += ambient;
+        sumDiffuse += diffuse;
+        sumSpecular += specular;
     }
 
     if (pointLight)
@@ -73,16 +82,14 @@ void main()
             vec3 specular = lSpecular[i] * pow(max(dot(r,v),0.0), 300.0);
             specular = clamp(specular, 0.0, 1.0);
 
-            amdiff += fragColor.rgb * (ambient + diffuse);
-            spec += specular;
+            sumAmbient += ambient;
+            sumDiffuse += diffuse;
+            sumSpecular += specular;
         }
-        fragColor.rgb += amdiff + spec;
     }
 
     if (spotLight)
     {
-        vec3 amdiff = vec3(0.0, 0.0, 0.0);
-        vec3 spec = vec3(0.0, 0.0, 0.0);
         for (int i = 0; i < num_spotlightsF; i++)
         {
             vec3 l = normalize(toslDirection[i]);
@@ -95,20 +102,27 @@ void main()
                 vec3 r = normalize(-reflect(lightdir,vfragNormal));
                 vec3 v = normalize(v_surfaceToView);
 
-                vec3 ambient = lAmbient[i];
-                vec3 diffuse = lDiffuse[i] * max(dot(vfragNormal, lightdir),0.0);
+                vec3 ambient = slAmbient[i];
+                vec3 diffuse = slDiffuse[i] * max(dot(vfragNormal, lightdir),0.0);
                 diffuse = clamp(diffuse, 0.0, 1.0);
 
-                vec3 specular = lSpecular[i] * pow(max(dot(r,v),0.0), 300.0);
+                vec3 specular = slSpecular[i] * pow(max(dot(r,v),0.0), 300.0);
                 specular = clamp(specular, 0.0, 1.0);
                 
-                amdiff += fragColor.rgb * (ambient + diffuse);
-                spec += specular;
+                sumAmbient += ambient;
+                sumDiffuse += diffuse;
+                sumSpecular += specular;     
+            }else
+            {
+                sumAmbient += slAmbient[i];
             }
-            fragColor.rgb += amdiff + spec;
-
         }
     }
 
+    sumAmbient = sumAmbient / (float(num_lightsF) + float(num_spotlightsF) + 1.0);
+    sumDiffuse = clamp(sumDiffuse, 0.0, 1.0);
+    sumSpecular = clamp(sumSpecular, 0.0, 1.0);
+
+    fragColor.xyz = fragColor.xyz * (sumAmbient + sumDiffuse) + sumSpecular;
 
 }
