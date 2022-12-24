@@ -36,6 +36,8 @@ class Main {
     tank: LoadedObject;
     christmasTree: LoadedObject;
     lightController: LightController;
+    lastFrameTime: number = 0.0;
+    deltaTime: number = 0.0;
     
     constructor(canvas: HTMLCanvasElement) {
         this.gl = this.get_gl(canvas);
@@ -110,15 +112,40 @@ class Main {
     }
 
     configure_loop() {
-        requestAnimationFrame(() => {this.update()});
+        requestAnimationFrame((frameTime) => {this.update(frameTime)});
     }
 
-    update() {
+    update(frameTime: number) {
+        this.countDeltaTime(frameTime);
+        console.log(this.deltaTime);
         Drawer.clearBg(this.gl);
         this.grass.draw();
+        this.updateTank();
         this.tank.draw();
         this.christmasTree.draw();
-        requestAnimationFrame(() => {this.update()});
+        requestAnimationFrame((frameTime) => {this.update(frameTime)});
+    }
+
+    countDeltaTime(frameTime: number){
+        this.deltaTime = frameTime - this.lastFrameTime;
+        this.lastFrameTime = frameTime;
+    }
+
+    updateTank() {
+        this.tankController.moveSpeed = 5.0 / 1000 * this.deltaTime;
+        this.tankController.rotationSpeed = 60.0 / 1000 * this.deltaTime;
+        if (this.tankController.keyDownDictionary["w"]) {
+            this.tankController.moveTankForward();
+        }
+        if (this.tankController.keyDownDictionary["s"]) {
+            this.tankController.moveTankBackward();
+        }
+        if (this.tankController.keyDownDictionary["a"]) {
+            this.tankController.rotateTankLeft();
+        }
+        if (this.tankController.keyDownDictionary["d"]) {
+            this.tankController.rotateTankRight();
+        }
     }
 }
 

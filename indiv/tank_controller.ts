@@ -20,18 +20,6 @@ export class TankController {
     keyDown(e: KeyboardEvent): void {
         console.log("down: "+e.key);
         this.keyDownDictionary[e.key] = true;
-        if (this.keyDownDictionary["w"]) {
-            this.moveTankForward();
-        }
-        if (this.keyDownDictionary["s"]) {
-            this.moveTankBackward();
-        }
-        if (this.keyDownDictionary["a"]) {
-            this.rotateTankLeft();
-        }
-        if (this.keyDownDictionary["d"]) {
-            this.rotateTankRight();
-        }
     }
 
     moveTankForward() {
