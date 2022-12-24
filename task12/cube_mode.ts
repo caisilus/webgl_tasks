@@ -27,7 +27,8 @@ export class CubeMode {
     }
 
     update(drawer: Drawer) {
-        this.transformator.rotate([performance.now() / 1000.0 * 60,
+        Drawer.clearBg(this.gl);
+        this.transformator.rotateAbsolute([performance.now() / 1000.0 * 60,
         performance.now() / 2 / 1000.0 * 60,
         performance.now() / 5 / 1000.0 * 60]);
         this.textureController.bind_textures();

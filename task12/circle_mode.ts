@@ -28,7 +28,7 @@ export class CircleMode {
     }
 
     update(drawer: Drawer) {
-        this.transformator.rotate([0, 0, performance.now() / 1000.0 * 60]);
+        this.transformator.rotateAbsolute([0, 0, performance.now() / 1000.0 * 60]);
         drawer.draw(this.circleData);
     }
 

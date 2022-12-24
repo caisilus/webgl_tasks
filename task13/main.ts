@@ -87,11 +87,11 @@ class Main {
     update() {
         this.drawer.clearBg();
         
-        this.turkey.transformator.rotate([0, 0, performance.now() / 3 / 1000.0 * 60]);
+        this.turkey.transformator.rotateAbsolute([0, 0, performance.now() / 3 / 1000.0 * 60]);
         
         this.turkey.draw();
 
-        this.span.transformator.rotate([0, performance.now() / 2 / 1000.0 * 60, 0]);
+        this.span.transformator.rotateAbsolute([0, performance.now() / 2 / 1000.0 * 60, 0]);
         this.span.draw();
 
         if (this.angleUniform != null) {

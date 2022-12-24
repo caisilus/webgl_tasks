@@ -28,11 +28,29 @@ export class Transformator{
         mat4.identity(this.rotateMatrix);
         gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     
-        this.initialForward = [-1, 0, 0];
+        this.initialForward = [0, 0, 0];
         this.forward = this.initialForward;
     }
 
+    setForward(newForward: [number, number, number]) {
+        this.initialForward = newForward;
+        this.forward = newForward;
+    }
+
     rotate(angle: [number, number, number]) {
+        this.rotateX(angle[0]);
+        this.rotateY(angle[1]);
+        this.rotateZ(angle[2]);
+        var rotateXYMatrix = new Float32Array(16);
+        mat4.mul(rotateXYMatrix, this.xRotationMatrix, this.yRotationMatrix);
+        var rotateXYZMatrix = new Float32Array(16);
+        mat4.mul(rotateXYZMatrix, rotateXYMatrix, this.zRotationMatrix);
+        mat4.mul(this.rotateMatrix, this.rotateMatrix, rotateXYZMatrix);
+        this.updateForward();
+        this.buildWorldMatrix();
+    }
+
+    rotateAbsolute(angle: [number, number, number]) {
         this.rotateX(angle[0]);
         this.rotateY(angle[1]);
         this.rotateZ(angle[2]);

@@ -24,10 +24,11 @@ export class TetrahedronMode {
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
         this.textureController.disable_textures();
-        this.transformator.rotate([60,15,50]);
+        this.transformator.rotateAbsolute([60,15,50]);
     }
 
     update(drawer: Drawer) {
+        Drawer.clearBg(this.gl);
         let drawData = this.dataCreator.tetrahedronData();
         drawer.drawIndex(drawData);
     }
