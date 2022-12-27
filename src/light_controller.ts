@@ -11,7 +11,7 @@ export class LightController {
     //Направление глобального света
     globalLightDirection: number[] = [0.0,1,0.0];
     globalLightAmbient: number[] = [0.1,0.1,0.1];
-    globalLightDiffuse: number[] = [0.8,0.8,0.8];
+    globalLightDiffuse: number[] = [0.7,0.7,0.7];
     globalLightSpecular: number[] = [1.0,1.0,1.0];
 
     //Параметры точечных источников света

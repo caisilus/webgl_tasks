@@ -18,6 +18,9 @@ import FieldTexture from "./models/Field.png";
 import ChristmasTreeModel from "./models/ChristmasTree.obj";
 import ChristmasTreeTexture from "./models/ChristmasTree.png";
 
+import BarellModel from "./models/Barrel.obj";
+import BarellTexture from "./models/Barrel.png";
+
 import { Texture } from "../src/texture";
 import { LightController } from "../src/light_controller";
 import { LightSource } from "../src/light_source";
@@ -33,6 +36,7 @@ class Main {
     tankController: TankController;
     // cameraController: CameraController;
     grass: LoadedObject;
+    barell: LoadedObject;
     tank: LoadedObject;
     christmasTree: LoadedObject;
     lightController: LightController;
@@ -55,8 +59,6 @@ class Main {
         this.tank.transformator.translate(0, 0, 0);
         this.tank.transformator.setForward([-1, 0, 0]);
         this.tank.transformator.rotate([0, 90, 0]);
-
-        this.tankController = new TankController(this.tank.transformator, this.camera);
         
         this.grass = new LoadedObject(this.drawer, FieldModel, FieldTexture);
         this.grass.transformator.scale(2, 1, 2);
@@ -65,12 +67,15 @@ class Main {
         this.christmasTree = new LoadedObject(this.drawer, ChristmasTreeModel, ChristmasTreeTexture);
         this.christmasTree.transformator.translate(5, 0, 10);
 
-        
+        this.barell = new LoadedObject(this.drawer, BarellModel, BarellTexture);
+        this.barell.transformator.translate(0, 0, 5);
+        this.barell.transformator.scale(3, 3, 3);
+
         let spls0 = new SpotLightSource( 
             this.gl,       
-            [0, 200, 0], // lightPosition
-            [0, 0, 0], // lightTarget
-            10, //lightLimit
+            [-1.2, 1, 0], // lightPosition
+            [-1.2, 1, 2], // lightTarget
+            5, //lightLimit
             [0.2,0.2,0.2], // lightAmbient
             [1,1,1], // lightDiffuse
             [1,1,1], // lightSpecular
@@ -78,22 +83,27 @@ class Main {
 
         let spls1 = new SpotLightSource(
             this.gl,          
-            [0, 50, -200], // lightPosition
-            [0, 50, 0], // lightTarget
+            [1.2, 1, 0], // lightPosition
+            [1.2, 1, 2], // lightTarget
             5, //lightLimit
-            [0.2,0.0,0.0], // lightAmbient
-            [0.2,0.2,0.2], // lightDiffuse
+            [0.3,0.3,0.3], // lightAmbient
+            [1,1,1], // lightDiffuse
             [1,1,1], // lightSpecular
         );
         
         this.lightController = new LightController(this.gl, this.program)
         this.lightController.add_spotlight_source(spls0);
-        //this.lightController.add_spotlight_source(spls1);
+        this.lightController.add_spotlight_source(spls1);
         this.lightController.set_active_lights([true, false, true]);
+
+        this.tankController = new TankController(this.tank.transformator, this.camera, spls0, spls1);
+        
+
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
         this.configure_loop();
     }
+
 
     get_gl(canvas: HTMLCanvasElement): WebGL2RenderingContext {
         if (canvas == null) {
@@ -119,6 +129,7 @@ class Main {
         Drawer.clearBg(this.gl);
         this.grass.draw();
         this.christmasTree.draw();
+        this.barell.draw();
 
         this.updateTank();
         this.tank.draw();

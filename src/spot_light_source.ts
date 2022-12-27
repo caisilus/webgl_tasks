@@ -1,4 +1,5 @@
 import { ShaderProgram } from "./shader_program";
+import {glMatrix, vec3} from "gl-matrix";
 
 export class SpotLightSource{
     gl: WebGL2RenderingContext;
@@ -44,6 +45,34 @@ export class SpotLightSource{
     public move_to(pos:[number, number, number])
     {
         this.lightPosition = pos;
+        this.update_uniforms();
+    }
+
+    public moveToPoint(newPosition: vec3) {
+        const currentPosition = vec3.fromValues(this.lightPosition[0], 
+                                                this.lightPosition[1], 
+                                                this.lightPosition[2]);
+        const delta = vec3.create();
+        vec3.sub(delta, newPosition, currentPosition);
+
+        const target = vec3.fromValues(this.lightTarget[0], 
+                                       this.lightTarget[1], 
+                                       this.lightTarget[2]);
+        vec3.add(target, target, delta);
+
+        this.lightPosition = [newPosition[0], newPosition[1], newPosition[2]];
+        this.lightTarget = [target[0], target[1], target[2]];
+        this.update_uniforms();
+    }
+
+    public rotate(angle: number) {
+        const radAngle = glMatrix.toRadian(angle);
+        let target = vec3.fromValues(this.lightTarget[0], this.lightTarget[1], this.lightTarget[2]);
+        const lightPosition = vec3.fromValues(this.lightPosition[0], 
+                                              this.lightPosition[1], 
+                                              this.lightPosition[2]);
+        vec3.rotateY(target, target, lightPosition, radAngle);
+        this.lightTarget = [target[0], target[1], target[2]];
         this.update_uniforms();
     }
 
