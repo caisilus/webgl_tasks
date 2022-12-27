@@ -48,9 +48,6 @@ class Main {
         this.drawer = new Drawer(this.gl, this.program);
 
         this.camera = new Camera(this.gl, this.program);
-        // this.cameraController = new CameraController(this.gl, this.camera);
-        // this.cameraController.cameraMoveSpeed = 2.0;
-        // this.cameraController.cameraRotationSpeed = 20;
         this.camera.setPosition(0, 3, -10);
         
         this.tank = new LoadedObject(this.drawer, TankModel, TankTexture);
@@ -59,7 +56,7 @@ class Main {
         this.tank.transformator.setForward([-1, 0, 0]);
         this.tank.transformator.rotate([0, 90, 0]);
 
-        this.tankController = new TankController(this.tank.transformator);
+        this.tankController = new TankController(this.tank.transformator, this.camera);
         
         this.grass = new LoadedObject(this.drawer, FieldModel, FieldTexture);
         this.grass.transformator.scale(2, 1, 2);
@@ -117,17 +114,20 @@ class Main {
     }
 
     update(frameTime: number) {
-        this.countDeltaTime(frameTime);
-        console.log(this.deltaTime);
+        this.updateDeltaTime(frameTime);
+
         Drawer.clearBg(this.gl);
         this.grass.draw();
+        this.christmasTree.draw();
+
         this.updateTank();
         this.tank.draw();
-        this.christmasTree.draw();
+        
+        
         requestAnimationFrame((frameTime) => {this.update(frameTime)});
     }
 
-    countDeltaTime(frameTime: number){
+    updateDeltaTime(frameTime: number){
         this.deltaTime = frameTime - this.lastFrameTime;
         this.lastFrameTime = frameTime;
     }
@@ -135,18 +135,7 @@ class Main {
     updateTank() {
         this.tankController.moveSpeed = 5.0 / 1000 * this.deltaTime;
         this.tankController.rotationSpeed = 60.0 / 1000 * this.deltaTime;
-        if (this.tankController.keyDownDictionary["w"]) {
-            this.tankController.moveTankForward();
-        }
-        if (this.tankController.keyDownDictionary["s"]) {
-            this.tankController.moveTankBackward();
-        }
-        if (this.tankController.keyDownDictionary["a"]) {
-            this.tankController.rotateTankLeft();
-        }
-        if (this.tankController.keyDownDictionary["d"]) {
-            this.tankController.rotateTankRight();
-        }
+        this.tankController.updateTank();
     }
 }
 

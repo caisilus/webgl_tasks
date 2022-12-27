@@ -51,20 +51,6 @@ export class Camera{
         this.yaw = Math.atan2(this.cameraDirection[2], this.cameraDirection[0]);
     }
 
-    private coutDiection(pitch: number, yaw: number) {
-        this.cameraDirection = new Float32Array(3);
-        this.cameraDirection[0] = Math.cos(pitch) * Math.cos(yaw);
-        this.cameraDirection[1] = Math.sin(pitch);
-        this.cameraDirection[2] = Math.cos(pitch) * Math.sin(yaw);
-        this.cameraUp = new Float32Array(3);
-        this.cameraUp[0] = Math.sin(pitch);
-        this.cameraUp[1] =  - Math.cos(pitch) * Math.cos(yaw + Math.PI / 2);
-        this.cameraUp[2] = Math.cos(pitch) * Math.sin(yaw + Math.PI / 2);
-        vec3.normalize(this.cameraUp, this.cameraUp);
-        vec3.normalize(this.cameraDirection, this.cameraDirection);
-        console.log("dir:" + this.cameraDirection);
-    }
-
     private setUpView() {
         let iden = mat4.create();
         mat4.identity(iden);
@@ -177,5 +163,9 @@ export class Camera{
         this.camPositionLocation = program.getUniformLocation("camPosition");
         this.matCameraUniformLocation = program.getUniformLocation("mCamera");
         this.gl.uniformMatrix4fv(this.matCameraUniformLocation, false, this.matCamera);
+    }
+
+    public position(): Float32Array {
+        return this.cameraPosition;
     }
 }

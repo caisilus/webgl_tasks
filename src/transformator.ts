@@ -118,4 +118,9 @@ export class Transformator{
         this.gl.uniformMatrix4fv(this.matWorldUniformLocation, false, this.matWorld);
     }
 
+    position() {
+        let newPosition = vec3.fromValues(0, 0, 0);
+        vec3.transformMat4(newPosition, newPosition, this.translationMatrix);
+        return newPosition;
+    }
 }
