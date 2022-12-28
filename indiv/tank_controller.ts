@@ -14,6 +14,7 @@ export class TankController {
     localCameraPosition: vec3;
     localLight1Position: vec3;
     localLight2Position: vec3;
+    headlightsOn: boolean;
 
     constructor(private transformator: Transformator, private camera: Camera, 
                 private light1: SpotLightSource, private light2: SpotLightSource) {
@@ -37,6 +38,8 @@ export class TankController {
                                                    localLight2Position[1], 
                                                    localLight2Position[2]);
         
+        this.headlightsOn = true;
+
         document.addEventListener('keydown', (e) => { this.keyDown(e); }, false);
         document.addEventListener('keyup', (e) => { this.keyUp(e); }, false);
     }
@@ -83,6 +86,9 @@ export class TankController {
 
     keyDown(e: KeyboardEvent): void {
         console.log("down: "+e.key);
+        if (e.key == "l") {
+            this.headlightsOn = !this.headlightsOn;
+        }
         this.keyDownDictionary[e.key] = true;
     }
 

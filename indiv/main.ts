@@ -76,7 +76,7 @@ class Main {
             [-1.2, 1, 0], // lightPosition
             [-1.2, 1, 2], // lightTarget
             5, //lightLimit
-            [0.2,0.2,0.2], // lightAmbient
+            [0,0,0], // lightAmbient
             [1,1,1], // lightDiffuse
             [1,1,1], // lightSpecular
         );
@@ -86,7 +86,7 @@ class Main {
             [1.2, 1, 0], // lightPosition
             [1.2, 1, 2], // lightTarget
             5, //lightLimit
-            [0.3,0.3,0.3], // lightAmbient
+            [0,0,0], // lightAmbient
             [1,1,1], // lightDiffuse
             [1,1,1], // lightSpecular
         );
@@ -127,6 +127,7 @@ class Main {
         this.updateDeltaTime(frameTime);
 
         Drawer.clearBg(this.gl);
+        this.lightController.set_active_lights([true, false, this.tankController.headlightsOn]);
         this.grass.draw();
         this.christmasTree.draw();
         this.barell.draw();
